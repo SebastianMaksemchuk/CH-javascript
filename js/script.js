@@ -106,7 +106,7 @@ do {
   if (operacion != null) {
     repetir = prompt("¿Desea realizar otra operación? (Y/n)");
   };
-} while (articulo != "001" && articulo != "002" && articulo != "003" || operacion == null || repetir != "n" || repetir != "N"|| repetir != "null");
+} while (articulo != "001" && articulo != "002" && articulo != "003" && repetir != "n" && repetir != "N" && repetir != "null" || operacion == null);
 
 alert("Stock final:\n 001 - NT-Link: " + stock001 + "\n 002 - NT-COM: " + stock002 + "\n 003 - NT-WiFi: " + stock003)
 console.log("Stock final:\n 001 - NT-Link: " + stock001 + "\n 002 - NT-COM: " + stock002 + "\n 003 - NT-WiFi: " + stock003)
