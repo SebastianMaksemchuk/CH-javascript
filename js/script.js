@@ -53,6 +53,16 @@ function selecionarProducto(codigoProducto) {
 function modificarStock(codigoProducto, operacion) {
   codigoProducto = parseInt(codigoProducto);
   let cambio;
+  function agregar(stock, cantidad) {
+    stock = stock + cantidad;
+    stockProductoSeleccionado = stock;
+    return stock
+  };
+  function remover(stock, cantidad) {
+    stock = stock - cantidad;
+    stockProductoSeleccionado = stock;
+    return stock
+  };
   switch (operacion) {
     case "+":
       do {
@@ -64,16 +74,13 @@ function modificarStock(codigoProducto, operacion) {
       cambio = parseInt(cambio);
       switch (codigoProducto) {
         case 1:
-          stock001 = stock001 + cambio;
-          stockProductoSeleccionado = stock001;
+          stock001 = agregar(stock001, cambio);
           break;
         case 2:
-          stock002 = stock002 + cambio;
-          stockProductoSeleccionado = stock002;
+          stock002 = agregar(stock002, cambio);
           break;
         case 3:
-          stock003 = stock003 + cambio;
-          stockProductoSeleccionado = stock003;
+          stock003 = agregar(stock003, cambio);
           break;
         // no debería haber forma del llegar al default
         default:
@@ -100,16 +107,13 @@ function modificarStock(codigoProducto, operacion) {
       } while (stoockInsuficiente);
       switch (codigoProducto) {
         case 1:
-          stock001 = stock001 - cambio;
-          stockProductoSeleccionado = stock001;
+          stock001 = remover(stock001, cambio);
           break;
         case 2:
-          stock002 = stock002 - cambio;
-          stockProductoSeleccionado = stock002;
+          stock002 = remover(stock002, cambio);
           break;
         case 3:
-          stock003 = stock003 - cambio;
-          stockProductoSeleccionado = stock003;
+          stock003 = remover(stock003, cambio);
           break;
         // no debería haber forma del llegar al default
         default:
@@ -132,7 +136,7 @@ let repetir;
 
 // ejecución:
 do {
-  // se le pide al usuario que seleccione un producto y se verifica que sea valido
+  // se pide al usuario que seleccione un producto y se verifica que sea valido
   let codigoProductoInvalido = true;
   while (codigoProductoInvalido) {
     codigoProductoSeleccionado = prompt("Ingrese el código del artículo cuyo stock desea modificar.\n\n 001 - NT-Link (Stock: " + stock001 + ")\n 002 - NT-COM (Stock: " + stock002 + ")\n 003 - NT-WiFi (Stock: " + stock003 + ")");
@@ -148,7 +152,7 @@ do {
   // se cargan los datos del producto seleccionado
   selecionarProducto(codigoProductoSeleccionado);
 
-  // se le pide al usuario que seleccione la operacion a realizar y verifica que sea valida
+  // se pide al usuario que seleccione la operacion a realizar y verifica que sea valida
   let operacionSeleccionada;
   let operacionInvalida = true;
   while (operacionInvalida) {
@@ -167,7 +171,7 @@ do {
     modificarStock(codigoProductoSeleccionado, operacionSeleccionada);
   };
 
-  // se le pregunta al usuario si desea repetir o finalizar
+  // pregunta al usuario si desea repetir o finalizar
   repetir = prompt("¿Desea realizar otra operación? (Y/n)");
   repetir = repetir != "n" && repetir != "N" && repetir != null;
 } while (repetir);
