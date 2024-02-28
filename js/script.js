@@ -1,181 +1,387 @@
-// saludo de bienvenida
-let usuario = "";
-do {
-  usuario = prompt("¡Bienvenido! \n Por favor ingrese su nombre:");
-} while (usuario == null || usuario == "");
+// Usuarios
+const usuarios = [];
+class Usuario {
+  constructor(id, correo, nombreDeUsuario, password, nivel, nombre, apellido, imagen, direccion) {
+    this.id = id;
+    this.correo = correo;
+    this.nombreDeUsuario = nombreDeUsuario
+    this.nombre = nombre;
+    this.apellido = apellido
+    this.password = password;
+    this.nivel = nivel;
+    this.imagen = imagen;
+    this.direccion = direccion;
+  };
+  cambiarCorreo(nuevo) {
+    this.correo = nuevo;
+  };
+  cambiarNombreDeUsuario(nuevo) {
+    this.nombreDeUsuario = nuevo;
+  };
+  cambiarPassword(nuevo) {
+    this.password = nuevo;
+  };
+  cambiarNivel(nuevo) {
+    this.nivel = nuevo;
+  };
+  cambiarNombre(nuevo) {
+    this.nombre = nuevo;
+  };
+  cambiarApellido(nuevo) {
+    this.apellido = nuevo;
+  };
+  cambiarImagen(nuevo) {
+    this.imagen = nuevo;
+  };
+  cambiarDireccion(nuevo) {
+    this.direccion = nuevo;
+  };
+}
+function agregarUsuario(correo, nombreDeUsuario, password, nivel, nombre, apellido, imagen, direccion) {
+  let nuevoID = usuarios.length;
+  const usuario = new Usuario(nuevoID, correo, nombreDeUsuario, password, nivel, nombre, apellido, imagen, direccion);
+  usuarios.push(usuario);
+}
 
-// acceso con password
-let password = prompt("Hola " + usuario + ".\nIngrese la contraseña de acceso:");
-for (let i = 2; i > 0; i--) {
-  if (password != 1234) {
-    password = prompt("Contraseña incorrecta.\nIngrese la contraseña de acceso:");
+// Creamos algunos usuarios para probar
+agregarUsuario(null, '', null, 0, 'Invitado', null, null, null);
+agregarUsuario('sebastian@netio.com.ar', 'sebastian', '1234', 9, 'Sebastian', 'Maksemchuk', null, null);
+agregarUsuario('alan@netio.com.ar', 'alan', '4K7', 9, 'Alan', 'M', null, null);
+agregarUsuario('mauro@netio.com.ar', 'mauro', 'mncase', 9, 'Mauro', 'C', null, null);
+agregarUsuario('martin@netio.com.ar', 'martin', 'atk77', 3, 'Martin', 'O', null, null);
+agregarUsuario('leo@netio.com.ar', 'leo', 'zami', 2, 'Leonardo', 'Z', null, null);
+agregarUsuario('cliente@netio.com.ar', 'cliente', 'cliente', 1, 'Cliente', 'X', null, null);
+
+// esta variable usuario es donde se guarda el usuario actual. Se inicializa en el usuario invitado.
+let usuario = usuarios[0];
+
+// Niveles de usuario: se le da un nombre a cada nivel (todavía no sé si usar directamente el número o el nombre)
+const niveles = {
+  'invitado': 0,
+  'cliente': 1,
+  'produccion': 2,
+  'comercial': 3,
+  'master': 9
+};
+
+// Permisos: se define para cada accion, qué niveles de usuario pueden realizarla
+const permisos = [];
+class Permiso {
+  constructor(funcion, niveles) {
+    this.funcion = funcion;
+    this.niveles = niveles;
+  };
+  nuevoPermiso(funcion, niveles) {
+    permisos.push(new Permiso(funcion, niveles))
   };
 };
-while (password != 1234) {
-  password = prompt("Contraseña incorrecta.\nIngrese la contraseña de acceso:\n(la contraseña es 1234)");
+function agregarPermisosParaAccion(funcion, niveles) {
+  const permiso = new Permiso();
+  permiso.nuevoPermiso(funcion, niveles);
 };
 
-// Set stocks iniciales
-let stock001 = 100;
-let stock002 = 50;
-let stock003 = 75;
+// se crea la lista de acciones que requieren permisos
+agregarPermisosParaAccion('verUsuarios', [9]);
+agregarPermisosParaAccion('crearUsuario', [9]);
+agregarPermisosParaAccion('editarUsuarioActual', [1, 2, 3, 9]);
+agregarPermisosParaAccion('editarUsuariosTodos', [9]);
+agregarPermisosParaAccion('verProductos', [0, 1, 2, 3, 9]);
+agregarPermisosParaAccion('ingresarAlPrograma', [1, 2, 3, 9]);
+agregarPermisosParaAccion('crearProducto', [2, 3, 9]);
+agregarPermisosParaAccion('editarProducto', [2, 3, 9]);
+agregarPermisosParaAccion('verPrecios', [1, 2, 3, 9]);
+agregarPermisosParaAccion('cambiarPrecios', [3, 9]);
+agregarPermisosParaAccion('verStock', [2, 3, 9]);
+agregarPermisosParaAccion('agregarStock', [2, 9]);
+agregarPermisosParaAccion('removerStock', [2, 3, 9]);
 
-// funcion para cargar datos del producto seleccionado
-let codigoProductoSeleccionado;
-let nombreProductoSeleccionado;
-let stockProductoSeleccionado;
-function selecionarProducto(codigoProducto) {
-  switch (codigoProducto) {
-    case 1:
-      codigoProductoSeleccionado = "001"
-      nombreProductoSeleccionado = "NT-Link";
-      stockProductoSeleccionado = stock001;
-      break;
-    case 2:
-      codigoProductoSeleccionado = "002"
-      nombreProductoSeleccionado = "NT-COM";
-      stockProductoSeleccionado = stock002;
-      break;
-    case 3:
-      codigoProductoSeleccionado = "003"
-      nombreProductoSeleccionado = "NT-WiFi";
-      stockProductoSeleccionado = stock003;
-      break;
-    // no debería haber forma del llegar al default
-    default:
-      alert("ERROR inesperado");
-      console.log("ERROR inesperado");
-      break;
-  };
-};
-
-// funcion que modifica el stock del producto seleccionado
-function modificarStock(codigoProducto, operacion) {
-  codigoProducto = parseInt(codigoProducto);
-  let cambio;
-  function agregar(stock, cantidad) {
-    stock = stock + cantidad;
-    stockProductoSeleccionado = stock;
-    return stock
-  };
-  function remover(stock, cantidad) {
-    stock = stock - cantidad;
-    stockProductoSeleccionado = stock;
-    return stock
-  };
-  switch (operacion) {
-    case "+":
-      do {
-        cambio = prompt("¿Cuántos artículos desea agregar al stock?\n" + codigoProductoSeleccionado + " - " + nombreProductoSeleccionado + ". Stock actual: " + stockProductoSeleccionado);
-        if (isNaN(cambio)) {
-          alert("Ingrese un número.");
-        };
-      } while (isNaN(cambio) || cambio == null || cambio == "")
-      cambio = parseInt(cambio);
-      switch (codigoProducto) {
-        case 1:
-          stock001 = agregar(stock001, cambio);
-          break;
-        case 2:
-          stock002 = agregar(stock002, cambio);
-          break;
-        case 3:
-          stock003 = agregar(stock003, cambio);
-          break;
-        // no debería haber forma del llegar al default
-        default:
-          alert("ERROR inesperado");
-          console.log("ERROR inesperado");
-          break;
+// esta función se utiliza para verificar si el usuario tiene permiso para realizar determinada acción, según su nivel
+function verificarPermiso(accion, alerta) {
+  /*  accion: función a verificar
+  alert: bool si se desea alert de usuario no autorizado o no*/
+  let autorizado = false;
+  const funcion = permisos.find(el => el.funcion == accion);
+  if (!funcion) {
+    alert('Error inesperado: la función ' + accion + ' no existe.');
+  } else
+    if (funcion.niveles.includes(usuario.nivel)) {
+      autorizado = true;
+    } else
+      if (alerta) {
+        alert('No se encuentra autorizado para realizar esta acción.');
       };
-      alert("Se agregaron " + cambio + " " + nombreProductoSeleccionado + " al stock.\nStock actual: " + stockProductoSeleccionado);
-      break;
-    case "-":
-      let stoockInsuficiente = true;
-      do {
-        do {
-          cambio = prompt("¿Cuántos artículos desea remover del stock?\n" + codigoProductoSeleccionado + " - " + nombreProductoSeleccionado + ". Stock actual: " + stockProductoSeleccionado);
-          if (isNaN(cambio)) {
-            alert("Ingrese un número.");
+  return autorizado;
+};
+
+// Creacion del inventario
+let inventario = [];
+// Inventario temporal: se trabaja sobre una copia del inventario para evitar problemas, luego se guarda al inventario real y se copia al registro
+let inventarioTemp = [];
+
+class Producto {
+  constructor(id, modelo, precio, stock, imagen) {
+    this.id = id;
+    this.modelo = modelo;
+    this.precio = precio
+    this.stock = stock;
+    this.imagen = imagen;
+  };
+  cambiarPrecio(nuevo) {
+    this.precio = nuevo;
+  };
+  agregarStock(cambio) {
+    this.stock += cambio
+  };
+  removerStock(cambio) {
+    this.stock -= cambio
+  };
+};
+function agregarProducto(modelo, precio, stock, imagen) {
+  let nuevoID = inventarioTemp.length + 1;
+  nuevoID = nuevoID.toString();
+  while (nuevoID.length < 3) {
+    nuevoID = '0' + nuevoID;
+  };
+  const producto = new Producto(nuevoID, modelo, precio, stock, imagen);
+  inventarioTemp.push(producto);
+};
+
+// Historial de modificaciones al inventario
+let fechaHoraActual = new Date();
+const inventarioHistorico = [];
+
+// funcion para guardar el inventario temporal en el definitivo. Además crea un registro en el historial de modificaciones del inventario.
+function guardarInventario() {
+  fechaHoraActual = new Date();
+  inventario = inventarioTemp.map(el => ({ ...el }));
+  inventarioHistorico.push({ fecha: fechaHoraActual, usuario: usuario.nombreDeUsuario, inventario });
+};
+
+// Creamos algunos productos para probar y los guardamos como estado incial del inventario
+agregarProducto("NT-Link", 140, 100, null);
+agregarProducto("NT-COM", 160, 50, null);
+agregarProducto("NT-WiFi", 60, 75, null);
+guardarInventario();
+
+// esta variable se usa en los promts y alerts. Se va modificando durante la ejecución.
+let mensaje = '';
+//estas variables se usan para guardar los return de seleccion de los menús de opciones y otras cosas
+let seleccion = undefined;
+let idProducto = undefined;
+
+//función para agregar en mensaje el inventarioTemp completo. Lo que se muestra depende del nivel del usuario
+function inventarioToMensaje() {
+  inventarioTemp.forEach(el => {
+    mensaje += '\n' + el.id + ' - ' + el.modelo + '.'
+    if (verificarPermiso('verPrecios')) {
+      mensaje += ' ' + el.precio + ' USD.'
+    };
+    if (verificarPermiso('verStock')) {
+      mensaje += ' (Stock: ' + el.stock + ')'
+    };
+  });
+};
+
+// login
+function logIn() {
+  do {
+    let correoONombre = prompt('¡Bienvenido!\nIngrese su correo o nombre de usuario. (Deje en blanco para ingresar como invitado.)');
+    let usuarioEncontrado = usuarios.find(el => el.correo == correoONombre || el.nombreDeUsuario == correoONombre)
+    if (!usuarioEncontrado) {
+      usuario = undefined
+      alert('No se encontro un usuario registrado con ese dato.')
+    } else {
+      usuario = usuarioEncontrado
+      if (usuario.nivel > 0) {
+        let password = prompt('Hola ' + usuario.nombre + '.\nPor favor ingrese su contraseña de acceso:')
+        for (let i = 2; i > 0; i--) {
+          if (password != usuario.password) {
+            password = prompt('Contraseña incorrecta.\nIngrese su contraseña de acceso:');
           };
-        } while (isNaN(cambio) || cambio == null || cambio == "");
-        cambio = parseInt(cambio);
-        stoockInsuficiente = cambio > stockProductoSeleccionado;
-        if (stoockInsuficiente) {
-          alert("Stock insuficiente");
         };
-      } while (stoockInsuficiente);
-      switch (codigoProducto) {
-        case 1:
-          stock001 = remover(stock001, cambio);
-          break;
-        case 2:
-          stock002 = remover(stock002, cambio);
-          break;
-        case 3:
-          stock003 = remover(stock003, cambio);
-          break;
-        // no debería haber forma del llegar al default
-        default:
-          alert("ERROR inesperado");
-          console.log("ERROR inesperado");
-          break;
+        while (password != usuario.password) {
+          password = prompt('Contraseña incorrecta.\nIngrese la contraseña de acceso:\n(la contraseña es ' + usuario.password + ')');
+        };
       };
-      alert("Se removieron " + cambio + " " + nombreProductoSeleccionado + " del stock.\nStock actual: " + stockProductoSeleccionado);
-      break;
-    // no debería haber forma del llegar al default
-    default:
-      alert("ERROR inesperado");
-      console.log("ERROR inesperado");
-      break;
-  };
+    };
+  } while (usuario == undefined);
 };
 
-// inicializacion variable de fin de bucle
-let repetir;
+// utils para los menus
+const mensajeOpcionInvalida = 'Seleccione una de las opciones disponibles.'
 
-// ejecución:
-do {
-  // se pide al usuario que seleccione un producto y se verifica que sea valido
-  let codigoProductoInvalido = true;
-  while (codigoProductoInvalido) {
-    codigoProductoSeleccionado = prompt("Ingrese el código del artículo cuyo stock desea modificar.\n\n 001 - NT-Link (Stock: " + stock001 + ")\n 002 - NT-COM (Stock: " + stock002 + ")\n 003 - NT-WiFi (Stock: " + stock003 + ")");
-    codigoProductoSeleccionado = parseInt(codigoProductoSeleccionado)
-    codigoProductoInvalido = codigoProductoSeleccionado != 1 && codigoProductoSeleccionado != 2 && codigoProductoSeleccionado != 3;
-    if (codigoProductoSeleccionado == null || codigoProductoSeleccionado == "") {
-      continue;
-    } else if (codigoProductoInvalido) {
-      alert("Código inválido");
-      continue;
+// menu principal
+function mostrarMenuPrincipal() {
+  mensaje = 'Menú principal';
+  mensaje += '\n1. Productos';
+  mensaje += '\n2. Usuarios';
+  mensaje += '\n0. Finalizar';
+  let seleccion = parseInt(prompt(mensaje));
+  if (!seleccion || seleccion > 3) {
+    if (seleccion != 0) {
+      alert(mensajeOpcionInvalida)
     };
   };
-  // se cargan los datos del producto seleccionado
-  selecionarProducto(codigoProductoSeleccionado);
+  return seleccion
+};
 
-  // se pide al usuario que seleccione la operacion a realizar y verifica que sea valida
-  let operacionSeleccionada;
-  let operacionInvalida = true;
-  while (operacionInvalida) {
-    operacionSeleccionada = prompt("¿Qué operación desea realizar?\n¿Agregar stock (+) o remover stock (-)?\n" + codigoProductoSeleccionado + " - " + nombreProductoSeleccionado + ". Stock actual: " + stockProductoSeleccionado);
-    operacionInvalida = operacionSeleccionada != "+" && operacionSeleccionada != "-";
-    if (operacionSeleccionada == null) {
-      break;
-    } else
-      if (operacionInvalida) {
-        alert("Operación inválida. \n Ingrese + o -.");
-        continue;
+// menu productos
+function mostrarMenuProductos() {
+  mensaje = 'Productos:\n';
+  if (verificarPermiso('editarProducto')) {
+    mensaje += 'Ingrese el codigo del producto que desea editar.\n'
+  };
+  inventarioToMensaje();
+  if (verificarPermiso('crearProducto')) {
+    mensaje += '\n999 - Registrar un nuevo producto'
+  }
+  mensaje += '\n\n000 - Volver al menú principal.'
+  let seleccion = parseInt(prompt(mensaje));
+  if (!seleccion || seleccion > inventarioTemp.length && seleccion != 999) {
+    if (seleccion != 0) {
+      alert(mensajeOpcionInvalida);
+    };
+  } else if (seleccion != 999) {
+    menu = 'editar producto';
+  };
+  return seleccion
+};
+
+
+//menu editar producto
+function mostrarMenuEditarProducto() {
+  mensaje = 'Editar producto:\n';
+  mensaje += '\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '.';
+  if (verificarPermiso('verPrecios')) {
+    mensaje += ' ' + inventarioTemp[idProducto].precio + ' USD' + '.';
+  };
+  if (verificarPermiso('verStock')) {
+    mensaje += ' Stock actual: ' + inventarioTemp[idProducto].stock + '.';
+  };
+  if (verificarPermiso('cambiarPrecios')) {
+    mensaje += '\n$ modificar precio';
+  };
+  if (verificarPermiso('agregarStock')) {
+    mensaje += '\n+ añadir stock';
+  };
+  if (verificarPermiso('removerStock')) {
+    mensaje += '\n- remover stock';
+  };
+  mensaje += '\n\n000 - Cancelar.';
+  let seleccion = prompt(mensaje);
+  if (parseInt(seleccion) == 0) {
+    seleccion = parseInt(seleccion);
+  } else {
+    let seleccionValida = seleccion == '$' || seleccion == '+' || seleccion == '-';
+    if (!seleccionValida) {
+      alert(mensajeOpcionInvalida);
+    };
+  };
+  return seleccion;
+};
+
+
+//Inicio
+
+//Empezamos con un inicio de sesión:
+logIn();
+
+// ejecución v2:
+let menu = 'principal';
+if (verificarPermiso('ingresarAlPrograma')) {
+  // variable que define en que menu estamos
+  do {
+    while (menu == 'principal') {
+      seleccion = mostrarMenuPrincipal();
+      switch (seleccion) {
+        case 0:
+          menu = 'salir';
+          break;
+        case 1:
+          menu = 'productos';
+          break;
+        case 2:
+          alert('Esta opción se encuentra temporalmente deshabilitada.')
+          break;
+        default:
+          break;
+      }
+    };
+
+    while (menu == 'productos') {
+      seleccion = mostrarMenuProductos();
+      switch (seleccion) {
+        case 0:
+        case null:
+          let guardar = prompt('¿Desea guardar los cambios realizados? (Y/n)');
+          guardar = guardar != null && guardar != 'n' && guardar != 'N';
+          if (guardar) {
+            guardarInventario();
+          } else {
+            inventarioTemp = inventario.map(el => ({ ...el }));
+          };
+          menu = 'principal';
+          break;
+        case 999:
+          if (verificarPermiso('crearProducto', true)) {
+            let nuevoProducto = prompt('Ingrese el nombre del nuevo producto:');
+            agregarProducto(nuevoProducto, 0, 0, null);
+          };
+          break;
+        default:
+          idProducto = seleccion - 1;
+          break;
       };
-  };
-  // ejecutar operacion
-  if (operacionSeleccionada != null) {
-    modificarStock(codigoProductoSeleccionado, operacionSeleccionada);
-  };
 
-  // pregunta al usuario si desea repetir o finalizar
-  repetir = prompt("¿Desea realizar otra operación? (Y/n)");
-  repetir = repetir != "n" && repetir != "N" && repetir != null;
-} while (repetir);
+      while (menu == 'editar producto') {
+        seleccion = mostrarMenuEditarProducto();
+        switch (seleccion) {
+          case 0:
+            menu = 'productos';
+            break;
+          case '$':
+            let nuevoPrecio = prompt('Ingrese el nuevo precio para el producto\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '.');
+            nuevoPrecio = parseFloat(nuevoPrecio);
+            if (!isNaN(nuevoPrecio)) {
+              inventarioTemp[idProducto].cambiarPrecio(nuevoPrecio);
+            } else {
+              alert('No igresó un valor válido');
+            };
+            menu = 'productos';
+            break;
+          case '+':
+            let mas = prompt('¿Cuánto desea agregar al stock?\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '. Stock actual: ' + inventarioTemp[idProducto].stock + '.');
+            mas = parseFloat(mas);
+            if (!isNaN(mas)) {
+              inventarioTemp[idProducto].agregarStock(mas);
+            } else {
+              alert('No igresó un valor válido');
+            };
+            menu = 'productos';
+            break;
+          case '-':
+            let menos = prompt('¿Cuánto desea agregar al stock?\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '. Stock actual: ' + inventarioTemp[idProducto].stock + '.');
+            menos = parseFloat(menos);
+            if (!isNaN(menos) && menos <= inventarioTemp[idProducto].stock) {
+              inventarioTemp[idProducto].removerStock(menos);
+            } else {
+              alert('No igresó un valor válido');
+            };
+            menu = 'productos';
+            break;
+          default:
+            break;
+        };
+      };
+    };
+  } while (menu != 'salir');
+};
 
-// estado final del stock
-alert("Stock final:\n 001 - NT-Link: " + stock001 + "\n 002 - NT-COM: " + stock002 + "\n 003 - NT-WiFi: " + stock003);
-console.log("Stock final:\n 001 - NT-Link: " + stock001 + "\n 002 - NT-COM: " + stock002 + "\n 003 - NT-WiFi: " + stock003);
+if (verificarPermiso('verProductos')) {
+  mensaje = 'Productos disponibles:';
+  inventarioToMensaje();
+  alert(mensaje);
+  console.log(mensaje);
+};
+
+console.table(inventarioHistorico)
