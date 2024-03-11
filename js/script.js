@@ -12,57 +12,89 @@ class Usuario {
     this.imagen = imagen;
     this.direccion = direccion;
   };
-  cambiarCorreo(nuevo) {
-    this.correo = nuevo;
-  };
-  cambiarNombreDeUsuario(nuevo) {
-    this.nombreDeUsuario = nuevo;
-  };
-  cambiarPassword(nuevo) {
-    this.password = nuevo;
-  };
-  cambiarNivel(nuevo) {
-    this.nivel = nuevo;
-  };
-  cambiarNombre(nuevo) {
-    this.nombre = nuevo;
-  };
-  cambiarApellido(nuevo) {
-    this.apellido = nuevo;
-  };
-  cambiarImagen(nuevo) {
-    this.imagen = nuevo;
-  };
-  cambiarDireccion(nuevo) {
-    this.direccion = nuevo;
-  };
 }
 function agregarUsuario(correo, nombreDeUsuario, password, nivel, nombre, apellido, imagen, direccion) {
   let nuevoID = usuarios.length;
   const usuario = new Usuario(nuevoID, correo, nombreDeUsuario, password, nivel, nombre, apellido, imagen, direccion);
   usuarios.push(usuario);
 }
-
 // Creamos algunos usuarios para probar
-agregarUsuario(null, '', null, 0, 'Invitado', null, null, null);
+agregarUsuario(null, null, null, 0, 'Invitado', null, null, null);
 agregarUsuario('sebastian@netio.com.ar', 'sebastian', '1234', 9, 'Sebastian', 'Maksemchuk', null, null);
-agregarUsuario('alan@netio.com.ar', 'alan', '4K7', 9, 'Alan', 'M', null, null);
-agregarUsuario('mauro@netio.com.ar', 'mauro', 'mncase', 9, 'Mauro', 'C', null, null);
-agregarUsuario('martin@netio.com.ar', 'martin', 'atk77', 3, 'Martin', 'O', null, null);
-agregarUsuario('leo@netio.com.ar', 'leo', 'zami', 2, 'Leonardo', 'Z', null, null);
-agregarUsuario('cliente@netio.com.ar', 'cliente', 'cliente', 1, 'Cliente', 'X', null, null);
+agregarUsuario('master@netio.com.ar', 'master', 'master', 9, 'Master', 'M', null, null);
+agregarUsuario('produccion@netio.com.ar', 'produccion', 'produccion', 4, 'Produccion', 'P', null, null);
+agregarUsuario('comercial@netio.com.ar', 'comercial', 'comercial', 3, 'Comercial', 'C', null, null);
+agregarUsuario('administracion@netio.com.ar', 'administracion', 'administracion', 2, 'Administracion', 'A', null, null);
+agregarUsuario('cliente@netio.com.ar', 'cliente', 'cliente', 1, 'Cliente', 'C', null, null);
 
-// esta variable usuario es donde se guarda el usuario actual. Se inicializa en el usuario invitado.
-let usuario = usuarios[0];
+// esta variable usuario es donde se guarda el usuario actual. 
+// Si ya hay un usuario en localStorage si carga ese, sino se carga el usuario invitado
+let usuario = JSON.parse(localStorage.getItem('usuario')) || usuarios[0];
 
-// Niveles de usuario: se le da un nombre a cada nivel (todavía no sé si usar directamente el número o el nombre)
-const niveles = {
-  'invitado': 0,
-  'cliente': 1,
-  'produccion': 2,
-  'comercial': 3,
-  'master': 9
-};
+// Crear la parte derecha del header segun estado de usuario
+const headerDerecha = document.getElementById('header-derecha');
+// Mensaje de saludo al usuario en el header
+const bienvenida = document.querySelector('#saludo');
+bienvenida.innerText = `¡Hola ${usuario.nombre}!`
+// genera el boton de acceso o cierre de sesión
+if (usuario.id == 0) {
+  const botonAcceso = document.createElement('button');
+  botonAcceso.innerHTML = 'Acceder';
+  botonAcceso.id = 'btn-acceso';
+  headerDerecha.appendChild(botonAcceso);
+} else {
+  const botonSalir = document.createElement('button');
+  botonSalir.innerHTML = 'Salir';
+  botonSalir.id = 'btn-salir';
+  headerDerecha.appendChild(botonSalir)
+}
+
+// transformar parte derecha del header en formulario de ingreso
+const botonAcceso = document.getElementById('btn-acceso');
+botonAcceso && botonAcceso.addEventListener('click', formAccesoUsuario);
+function formAccesoUsuario() {
+  const formularioAcceso = document.createElement('form');
+  formularioAcceso.id = 'formulario-acceso';
+  formularioAcceso.innerHTML =
+    `<input type="text" name="usuario" id="ingreso-usuario" placeholder="Usuario o Correo">
+  <input type="password" name="password" id="ingreso-password" placeholder="Contraseña">
+  <button type="submit" id="btn-ingresar">Ingresar</button>`;
+  headerDerecha.innerHTML = '';
+  headerDerecha.appendChild(formularioAcceso);
+
+  // envio del formulario de ingreso de usuario
+  formularioAcceso.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const ingresoUsuario = document.getElementById('ingreso-usuario')
+    const ingresoPassword = document.getElementById('ingreso-password')
+
+    // busca el usuario en el array de usuarios, avisa si no existe
+    let usuarioEncontrado = usuarios.find(el => el.correo == ingresoUsuario.value || el.nombreDeUsuario == ingresoUsuario.value);
+    if (!usuarioEncontrado) {
+      alert('No se encontro un usuario registrado con ese nombre o correo\nUsuarios validos: cliente, administracion, comercial, produccion, master (contraseña = usuario)');
+    } else {
+      //verifica contraseña
+      if (usuarioEncontrado.password != ingresoPassword.value) {
+        alert('Contraseña incorrecta');
+      } else {
+        // acceso válido, guarda usuario en LS y recarga la página
+        usuario = usuarioEncontrado;
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+        location.reload();
+      }
+    }
+  });
+}
+
+// Cerrar sesion
+const botonSalir = document.getElementById('btn-salir');
+botonSalir && botonSalir.addEventListener('click', cerrarSesion);
+function cerrarSesion() {
+  console.log(usuario);
+  localStorage.setItem('usuario', JSON.stringify(usuarios[0]))
+  console.log(usuario);
+  location.reload();
+}
 
 // Permisos: se define para cada accion, qué niveles de usuario pueden realizarla
 const permisos = [];
@@ -81,19 +113,13 @@ function agregarPermisosParaAccion(funcion, niveles) {
 };
 
 // se crea la lista de acciones que requieren permisos
-agregarPermisosParaAccion('verUsuarios', [9]);
-agregarPermisosParaAccion('crearUsuario', [9]);
-agregarPermisosParaAccion('editarUsuarioActual', [1, 2, 3, 9]);
-agregarPermisosParaAccion('editarUsuariosTodos', [9]);
-agregarPermisosParaAccion('verProductos', [0, 1, 2, 3, 9]);
-agregarPermisosParaAccion('ingresarAlPrograma', [1, 2, 3, 9]);
-agregarPermisosParaAccion('crearProducto', [2, 3, 9]);
-agregarPermisosParaAccion('editarProducto', [2, 3, 9]);
-agregarPermisosParaAccion('verPrecios', [1, 2, 3, 9]);
+agregarPermisosParaAccion('verProductos', [0, 1, 2, 3, 4, 9]);
+agregarPermisosParaAccion('crearProducto', [4, 9]);
+agregarPermisosParaAccion('editarProducto', [3, 4, 9]);
+agregarPermisosParaAccion('verPrecios', [1, 2, 3, 4, 9]);
 agregarPermisosParaAccion('cambiarPrecios', [3, 9]);
-agregarPermisosParaAccion('verStock', [2, 3, 9]);
-agregarPermisosParaAccion('agregarStock', [2, 9]);
-agregarPermisosParaAccion('removerStock', [2, 3, 9]);
+agregarPermisosParaAccion('verStock', [2, 3, 4, 9]);
+agregarPermisosParaAccion('cambiarStock', [3, 4, 9]);
 
 // esta función se utiliza para verificar si el usuario tiene permiso para realizar determinada acción, según su nivel
 function verificarPermiso(accion, alerta) {
@@ -103,285 +129,266 @@ function verificarPermiso(accion, alerta) {
   const funcion = permisos.find(el => el.funcion == accion);
   if (!funcion) {
     alert('Error inesperado: la función ' + accion + ' no existe.');
-  } else
-    if (funcion.niveles.includes(usuario.nivel)) {
-      autorizado = true;
-    } else
-      if (alerta) {
-        alert('No se encuentra autorizado para realizar esta acción.');
-      };
+  } else if (funcion.niveles.includes(usuario.nivel)) {
+    autorizado = true;
+  } else {
+    alerta && alert('No se encuentra autorizado para realizar esta acción.');
+  }
   return autorizado;
 };
 
-// Creacion del inventario
-let inventario = [];
-// Inventario temporal: se trabaja sobre una copia del inventario para evitar problemas, luego se guarda al inventario real y se copia al registro
-let inventarioTemp = [];
-
+//Productos
 class Producto {
-  constructor(id, modelo, precio, stock, imagen) {
+  constructor(id, nombre, precio, stock, imagen) {
     this.id = id;
-    this.modelo = modelo;
+    this.nombre = nombre;
     this.precio = precio
     this.stock = stock;
     this.imagen = imagen;
   };
+  cambiarNombre(nuevo) {
+    this.nombre = nuevo;
+  };
   cambiarPrecio(nuevo) {
     this.precio = nuevo;
   };
-  agregarStock(cambio) {
-    this.stock += cambio
+  cambiarStock(nuevo) {
+    this.stock = nuevo;
   };
-  removerStock(cambio) {
-    this.stock -= cambio
+  cambiarImagen(nuevo) {
+    this.imagen = nuevo;
   };
 };
-function agregarProducto(modelo, precio, stock, imagen) {
-  let nuevoID = inventarioTemp.length + 1;
+function agregarProducto(nombre, precio, stock, imagen) {
+  let nuevoID = inventario.length + 1;
   nuevoID = nuevoID.toString();
   while (nuevoID.length < 3) {
     nuevoID = '0' + nuevoID;
   };
-  const producto = new Producto(nuevoID, modelo, precio, stock, imagen);
-  inventarioTemp.push(producto);
+  const producto = new Producto(nuevoID, nombre, precio, stock, imagen);
+  inventario.push(producto);
 };
 
-// Historial de modificaciones al inventario
-let fechaHoraActual = new Date();
-const inventarioHistorico = [];
+//lista de imagenes de productos en carpeta de imagenes
+const imagenesProductos = [
+  { nombre: 'Sin imagen', imagen: 'sin-imagen.svg' },
+  { nombre: 'Accesorio', imagen: 'productos-accesorios.webp' },
+  { nombre: 'NT-Com 2 4G', imagen: 'productos-ntcom2-4g.webp' },
+  { nombre: 'NT-Com 3 4G', imagen: 'productos-ntcom3-4g.webp' },
+  { nombre: 'NT-Link 4G/5G', imagen: 'productos-ntlink-4g-5g.webp' },
+  { nombre: 'NT-Link 4G', imagen: 'productos-ntlink-4g.webp' },
+  { nombre: 'NT-RRL', imagen: 'productos-receptora.webp' },
+  { nombre: 'NT-Link WiFi', imagen: 'productos-wifi.webp' },
+];
 
-// funcion para guardar el inventario temporal en el definitivo. Además crea un registro en el historial de modificaciones del inventario.
-function guardarInventario() {
-  fechaHoraActual = new Date();
-  inventario = inventarioTemp.map(el => ({ ...el }));
-  inventarioHistorico.push({ fecha: fechaHoraActual, usuario: usuario.nombreDeUsuario, inventario });
+// Carga del inventario desde LS si existe, si no existe se crea vacio
+function cargarInventarioDesdeLS() {
+  const inventarioDesdeLS = JSON.parse(localStorage.getItem('inventario')) || [];
+  // Transformar los objetos en instancias de Producto para poder aplicar los metodos
+  inventario = inventarioDesdeLS.map(({ id, nombre, precio, stock, imagen }) => {
+    return new Producto(id, nombre, precio, stock, imagen);
+  });
+}
+let inventario = [];
+cargarInventarioDesdeLS();
+
+// Si el inventario está vacío creamos unos productos de base
+if (inventario.length === 0) {
+  agregarProducto("NT-Link 4G", 140, 100, `./assets/images/product/${imagenesProductos[5].imagen}`);
+  agregarProducto("NT-COM2 4G", 160, 50, `./assets/images/product/${imagenesProductos[2].imagen}`);
+  agregarProducto("NT-Link WiFi", 60, 75, `./assets/images/product/${imagenesProductos[7].imagen}`);
+  guardarInventarioLS();
 };
 
-// Creamos algunos productos para probar y los guardamos como estado incial del inventario
-agregarProducto("NT-Link", 140, 100, null);
-agregarProducto("NT-COM", 160, 50, null);
-agregarProducto("NT-WiFi", 60, 75, null);
-guardarInventario();
+// funcion para guardar el inventario en LS
+function guardarInventarioLS() {
+  localStorage.setItem('inventario', JSON.stringify(inventario));
+};
 
-// esta variable se usa en los promts y alerts. Se va modificando durante la ejecución.
-let mensaje = '';
-//estas variables se usan para guardar los return de seleccion de los menús de opciones y otras cosas
-let seleccion = undefined;
-let idProducto = undefined;
+// funcion auxiliar para crear elementos HTML de forma más concisa
+function crearElementoHTML({ tag, id, clases, text, HTML, type, value, htmlFor, placeholder, required, defaultSelected }) {
+  const elemento = document.createElement(tag);
+  id && (elemento.id = id);
+  clases && (elemento.className = clases);
+  text && (elemento.innerText = text);
+  HTML && (elemento.innerHTML = HTML);
+  type && (elemento.type = type);
+  value && (elemento.value = value);
+  htmlFor && (elemento.htmlFor = htmlFor);
+  placeholder && (elemento.placeholder = placeholder);
+  required && (elemento.required = required);
+  defaultSelected && (elemento.defaultSelected = defaultSelected);
+  return elemento;
+}
 
-//función para agregar en mensaje el inventarioTemp completo. Lo que se muestra depende del nivel del usuario
-function inventarioToMensaje() {
-  inventarioTemp.forEach(el => {
-    mensaje += '\n' + el.id + ' - ' + el.modelo + '.'
+// funcion para mostrar el inventario en HTML
+function mostrarInventario() {
+  let inventarioHTML = document.getElementById('inventario');
+  inventario.forEach(({ id, nombre, precio, stock, imagen }) => {
+    const card = crearElementoHTML({
+      tag: 'div', id: `producto-${id}`, clases: 'card text-center producto',
+      HTML: ` <img class="card-img-top producto-imagen" src=${imagen} alt="">
+              <h4 class="card-title producto-nombre">${nombre}</h4>`
+    });
     if (verificarPermiso('verPrecios')) {
-      mensaje += ' ' + el.precio + ' USD.'
+      const mostrarPrecio = crearElementoHTML({ tag: 'p', clases: 'producto-precio', text: `U$D ${precio}` });
+      card.append(mostrarPrecio);
     };
     if (verificarPermiso('verStock')) {
-      mensaje += ' (Stock: ' + el.stock + ')'
+      const mostrarStock = crearElementoHTML({ tag: 'p', clases: 'producto-stock', text: `Stock: ${stock}` });
+      card.append(mostrarStock)
     };
+    if (verificarPermiso('editarProducto')) {
+      const botonEditar = crearElementoHTML({
+        tag: 'button', text: 'Editar',
+        clases: "btn btn-sm position-absolute top-0 end-0 m-2", value: parseInt(id - 1)
+      });
+      card.append(botonEditar);
+      botonEditar.addEventListener('click', () => formEditarProducto(id))
+    };
+    inventarioHTML.append(card);
+  });
+  if (verificarPermiso('crearProducto')) {
+    const newCard = crearElementoHTML({
+      tag: 'div', id: 'nuevo-producto', clases: 'card text-center producto',
+      HTML: `<button class="btn btn-block w-100 h-100 m-0">Añadir un nuevo producto</button>`
+    });
+    inventarioHTML.append(newCard);
+  };
+};
+verificarPermiso('verProductos') && mostrarInventario()
+
+// Creacion de un nuevo producto
+const botonNuevo = document.querySelector('#nuevo-producto button');
+botonNuevo && botonNuevo.addEventListener('click', formNuevoProduct);
+function formNuevoProduct() {
+  const cardNuevo = document.getElementById('nuevo-producto');
+  cardNuevo.innerHTML = '';
+  const cardNuevoBody = crearElementoHTML({
+    tag: 'div', clases: 'card-body',
+    HTML: `<h5 class="card-title">Agregar Producto</h5>`
+  });
+  cardNuevo.append(cardNuevoBody);
+  const formNuevo = crearElementoHTML({ tag: 'form', id: 'form-nuevo' });
+  const labelNombre = crearElementoHTML({ tag: 'label', clases: 'form-label', text: 'Nombre:', htmlFor: 'nombre-producto' });
+  formNuevo.append(labelNombre);
+  const inputNombre = crearElementoHTML({ tag: 'input', type: 'text', id: 'nombre-producto', clases: 'form-control', placeholder: 'Nombre del nuevo producto', required: true });
+  formNuevo.append(inputNombre);
+  const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: 'imagen-select', clases: 'form-label', text: 'Imagen:' });
+  formNuevo.append(labelImagen);
+  const selectImagen = crearElementoHTML({ tag: 'select', id: 'imagen-select', clases: 'form-select' });
+  imagenesProductos.forEach((element) => {
+    const opcion = crearElementoHTML({ tag: 'option', value: element.imagen, text: element.nombre });
+    selectImagen.append(opcion);
+  });
+  formNuevo.append(selectImagen);
+  const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: 'precio-producto', clases: 'form-label', text: 'Precio en U$D:' });
+  formNuevo.append(labelPrecio);
+  const inputPrecio = crearElementoHTML({ tag: 'input', id: 'precio-producto', clases: 'form-control', placeholder: 'Precio', required: true });
+  if (!verificarPermiso('cambiarPrecios')) {
+    inputPrecio.value = 999999;
+    inputPrecio.disabled = true;
+  };
+  formNuevo.append(inputPrecio);
+  const labelStock = crearElementoHTML({ tag: 'label', htmlFor: 'stock-producto', clases: 'form-label', text: 'Stock inicial:' })
+  formNuevo.append(labelStock);
+  const inputStock = crearElementoHTML({ tag: 'input', type: 'number', id: 'stock-producto', clases: 'form-control', placeholder: 'Stock', required: true });
+  if (!verificarPermiso('cambiarStock')) {
+    inputPrecio.value = 0;
+    inputPrecio.disabled = true;
+  };
+  formNuevo.append(inputStock);
+  const botonesNuevo = crearElementoHTML({tag:'div',clases:'card-botones mt-3'});
+  const botonCancelarNuevo = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
+  botonCancelarNuevo.onclick = ()=> location.reload();
+  botonesNuevo.append(botonCancelarNuevo);
+  const botonGuardarNuevo = crearElementoHTML({tag:'button',type:'submit',clases:'btn btn-secondary',HTML:'Guardar'});
+  botonesNuevo.append(botonGuardarNuevo);
+  formNuevo.append(botonesNuevo)
+  cardNuevoBody.append(formNuevo);
+  formNuevo.addEventListener('submit', (e) => {
+    e.preventDefault();
+    crearProductoNuevo();
+    location.reload();
+  });
+}
+function crearProductoNuevo() {
+  const nombre = document.getElementById('nombre-producto').value;
+  const precio = document.getElementById('precio-producto').value;
+  const stock = document.getElementById('stock-producto').value;
+  const imagen = `./assets/images/product/${document.getElementById('imagen-select').value}`;
+  agregarProducto(nombre, precio, stock, imagen);
+  guardarInventarioLS();
+}
+
+// Edicion de productos
+function formEditarProducto(id) {
+  const productoEditar = inventario[parseInt(id) - 1];
+  const { nombre, imagen, precio, stock } = productoEditar;
+  const cardEditar = document.getElementById(`producto-${id}`);
+  cardEditar.innerHTML = '';
+  const cardEditarBody = crearElementoHTML({ tag: 'div', clases: 'card-body', HTML: '<h5 class="card-title">Editar Producto</h5>' });
+  cardEditar.append(cardEditarBody);
+  const formEditar = crearElementoHTML({ tag: 'form', id: `form-editar-${id}` });
+  const labelNombre = crearElementoHTML({ tag: 'label', htmlFor: `nombre-producto-${id}`, clases: 'form-label', text: 'Nombre:' });
+  formEditar.append(labelNombre);
+  const inputNombre = crearElementoHTML({ tag: 'input', type: 'text', id: `nombre-producto-${id}`, clases: 'form-control', value: nombre, required: true });
+  formEditar.append(inputNombre);
+  const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: `imagen-select-${id}`, clases: 'form-label', text: 'Imagen:' });
+  formEditar.append(labelImagen);
+  const selectImagen = crearElementoHTML({ tag: 'select', id: `imagen-select-${id}`, clases: 'form-select'});
+  imagenesProductos.forEach((element) => {
+    const opcion = crearElementoHTML({tag:'option',value:element.imagen,text:element.nombre});
+    imagen == `./assets/images/product/${opcion.value}` && (opcion.defaultSelected = true);
+    selectImagen.append(opcion);
+  });
+  formEditar.append(selectImagen);
+  const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: `precio-producto-${id}`, clases: 'form-label', text: 'Precio en U$D:' });
+  formEditar.append(labelPrecio);
+  const inputPrecio = crearElementoHTML({ tag: 'input', type: 'number', id: `precio-producto-${id}`, clases: 'form-control', value: precio, required: true });
+  if (!verificarPermiso('cambiarPrecios')) {
+    inputPrecio.disabled = true;
+  };
+  formEditar.append(inputPrecio);
+  const labelStock = crearElementoHTML({ tag: 'label', htmlFor: `stock-producto-${id}`, clases: 'form-label', text: 'Stock:' });
+  formEditar.append(labelStock);
+  const inputStock = crearElementoHTML({ tag: 'input', type: 'number', id: `stock-producto-${id}`, clases: 'form-control', value: stock, required: true });
+  if (!verificarPermiso('cambiarStock')) {
+    inputPrecio.disabled = true;
+  };
+  formEditar.append(inputStock);
+  const botonesEditar = crearElementoHTML({tag:'div',clases:'card-botones mt-3'});
+  const botonCancelarEditar = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
+  botonCancelarEditar.onclick = ()=> location.reload();
+  botonesEditar.append(botonCancelarEditar);
+  const botonGuardarEditar = crearElementoHTML({tag:'button',type:'submit',clases:'btn btn-secondary',HTML:'Guardar'});
+  botonesEditar.append(botonGuardarEditar);
+  formEditar.append(botonesEditar)
+  cardEditarBody.append(formEditar);
+  formEditar.addEventListener('submit', (e) => {
+    e.preventDefault();
+    guardarEdicion(id);
+    location.reload();
   });
 };
-
-// login
-function logIn() {
-  do {
-    let correoONombre = prompt('¡Bienvenido!\nIngrese su correo o nombre de usuario. (Deje en blanco para ingresar como invitado.)');
-    let usuarioEncontrado = usuarios.find(el => el.correo == correoONombre || el.nombreDeUsuario == correoONombre)
-    if (!usuarioEncontrado) {
-      usuario = undefined
-      alert('No se encontro un usuario registrado con ese dato.')
-    } else {
-      usuario = usuarioEncontrado
-      if (usuario.nivel > 0) {
-        let password = prompt('Hola ' + usuario.nombre + '.\nPor favor ingrese su contraseña de acceso:')
-        for (let i = 2; i > 0; i--) {
-          if (password != usuario.password) {
-            password = prompt('Contraseña incorrecta.\nIngrese su contraseña de acceso:');
-          };
-        };
-        while (password != usuario.password) {
-          password = prompt('Contraseña incorrecta.\nIngrese la contraseña de acceso:\n(la contraseña es ' + usuario.password + ')');
-        };
-      };
-    };
-  } while (usuario == undefined);
+function guardarEdicion(id) {
+  const producto = inventario[parseInt(id) - 1]
+  const nuevoNombre = document.getElementById(`nombre-producto-${id}`).value;
+  const nuevoPrecio = document.getElementById(`precio-producto-${id}`).value;
+  const nuevoStock = document.getElementById(`stock-producto-${id}`).value;
+  const nuevaImagen = `./assets/images/product/${document.getElementById(`imagen-select-${id}`).value}`;
+  producto.cambiarNombre(nuevoNombre);
+  producto.cambiarPrecio(nuevoPrecio);
+  producto.cambiarStock(nuevoStock);
+  producto.cambiarImagen(nuevaImagen);
+  guardarInventarioLS();
 };
 
-// utils para los menus
-const mensajeOpcionInvalida = 'Seleccione una de las opciones disponibles.'
-
-// menu principal
-function mostrarMenuPrincipal() {
-  mensaje = 'Menú principal';
-  mensaje += '\n1. Productos';
-  mensaje += '\n2. Usuarios';
-  mensaje += '\n0. Finalizar';
-  let seleccion = parseInt(prompt(mensaje));
-  if (!seleccion || seleccion > 3) {
-    if (seleccion != 0) {
-      alert(mensajeOpcionInvalida)
-    };
-  };
-  return seleccion
-};
-
-// menu productos
-function mostrarMenuProductos() {
-  mensaje = 'Productos:\n';
-  if (verificarPermiso('editarProducto')) {
-    mensaje += 'Ingrese el codigo del producto que desea editar.\n'
-  };
-  inventarioToMensaje();
-  if (verificarPermiso('crearProducto')) {
-    mensaje += '\n999 - Registrar un nuevo producto'
-  }
-  mensaje += '\n\n000 - Volver al menú principal.'
-  let seleccion = parseInt(prompt(mensaje));
-  if (!seleccion || seleccion > inventarioTemp.length && seleccion != 999) {
-    if (seleccion != 0) {
-      alert(mensajeOpcionInvalida);
-    };
-  } else if (seleccion != 999) {
-    menu = 'editar producto';
-  };
-  return seleccion
-};
-
-
-//menu editar producto
-function mostrarMenuEditarProducto() {
-  mensaje = 'Editar producto:\n';
-  mensaje += '\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '.';
-  if (verificarPermiso('verPrecios')) {
-    mensaje += ' ' + inventarioTemp[idProducto].precio + ' USD' + '.';
-  };
-  if (verificarPermiso('verStock')) {
-    mensaje += ' Stock actual: ' + inventarioTemp[idProducto].stock + '.';
-  };
-  if (verificarPermiso('cambiarPrecios')) {
-    mensaje += '\n$ modificar precio';
-  };
-  if (verificarPermiso('agregarStock')) {
-    mensaje += '\n+ añadir stock';
-  };
-  if (verificarPermiso('removerStock')) {
-    mensaje += '\n- remover stock';
-  };
-  mensaje += '\n\n000 - Cancelar.';
-  let seleccion = prompt(mensaje);
-  if (parseInt(seleccion) == 0) {
-    seleccion = parseInt(seleccion);
-  } else {
-    let seleccionValida = seleccion == '$' || seleccion == '+' || seleccion == '-';
-    if (!seleccionValida) {
-      alert(mensajeOpcionInvalida);
-    };
-  };
-  return seleccion;
-};
-
-
-//Inicio
-
-//Empezamos con un inicio de sesión:
-logIn();
-
-// ejecución v2:
-let menu = 'principal';
-if (verificarPermiso('ingresarAlPrograma')) {
-  // variable que define en que menu estamos
-  do {
-    while (menu == 'principal') {
-      seleccion = mostrarMenuPrincipal();
-      switch (seleccion) {
-        case 0:
-          menu = 'salir';
-          break;
-        case 1:
-          menu = 'productos';
-          break;
-        case 2:
-          alert('Esta opción se encuentra temporalmente deshabilitada.')
-          break;
-        default:
-          break;
-      }
-    };
-
-    while (menu == 'productos') {
-      seleccion = mostrarMenuProductos();
-      switch (seleccion) {
-        case 0:
-        case null:
-          let guardar = prompt('¿Desea guardar los cambios realizados? (Y/n)');
-          guardar = guardar != null && guardar != 'n' && guardar != 'N';
-          if (guardar) {
-            guardarInventario();
-          } else {
-            inventarioTemp = inventario.map(el => ({ ...el }));
-          };
-          menu = 'principal';
-          break;
-        case 999:
-          if (verificarPermiso('crearProducto', true)) {
-            let nuevoProducto = prompt('Ingrese el nombre del nuevo producto:');
-            agregarProducto(nuevoProducto, 0, 0, null);
-          };
-          break;
-        default:
-          idProducto = seleccion - 1;
-          break;
-      };
-
-      while (menu == 'editar producto') {
-        seleccion = mostrarMenuEditarProducto();
-        switch (seleccion) {
-          case 0:
-            menu = 'productos';
-            break;
-          case '$':
-            let nuevoPrecio = prompt('Ingrese el nuevo precio para el producto\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '.');
-            nuevoPrecio = parseFloat(nuevoPrecio);
-            if (!isNaN(nuevoPrecio)) {
-              inventarioTemp[idProducto].cambiarPrecio(nuevoPrecio);
-            } else {
-              alert('No igresó un valor válido');
-            };
-            menu = 'productos';
-            break;
-          case '+':
-            let mas = prompt('¿Cuánto desea agregar al stock?\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '. Stock actual: ' + inventarioTemp[idProducto].stock + '.');
-            mas = parseFloat(mas);
-            if (!isNaN(mas)) {
-              inventarioTemp[idProducto].agregarStock(mas);
-            } else {
-              alert('No igresó un valor válido');
-            };
-            menu = 'productos';
-            break;
-          case '-':
-            let menos = prompt('¿Cuánto desea agregar al stock?\n\n' + inventarioTemp[idProducto].id + ' - ' + inventarioTemp[idProducto].modelo + '. Stock actual: ' + inventarioTemp[idProducto].stock + '.');
-            menos = parseFloat(menos);
-            if (!isNaN(menos) && menos <= inventarioTemp[idProducto].stock) {
-              inventarioTemp[idProducto].removerStock(menos);
-            } else {
-              alert('No igresó un valor válido');
-            };
-            menu = 'productos';
-            break;
-          default:
-            break;
-        };
-      };
-    };
-  } while (menu != 'salir');
-};
-
-if (verificarPermiso('verProductos')) {
-  mensaje = 'Productos disponibles:';
-  inventarioToMensaje();
-  alert(mensaje);
-  console.log(mensaje);
-};
-
-console.table(inventarioHistorico)
+// Reset de aplicación, limpieza de LS y SS
+const botonReset = document.getElementById('btn-reset');
+botonReset.addEventListener('click', () => {
+  localStorage.clear();
+  sessionStorage.clear();
+  alert('aplicacion reseteada');
+  location.reload();
+});
