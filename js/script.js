@@ -392,13 +392,44 @@ function guardarEdicion(id) {
 // Reset de aplicación, limpieza de LS y SS
 const botonReset = document.getElementById('btn-reset');
 botonReset.addEventListener('click', () => {
-  localStorage.clear();
-  sessionStorage.clear();
-  alert('aplicacion reseteada');
-  location.reload();
+  Swal.fire({
+    title: "¿Desea resetear la aplicación?",
+    text: "Se borrarán todos los cambios realizados. No se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, resetear la aplicación"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      localStorage.clear();
+      sessionStorage.clear();
+      Swal.fire({
+        text: "Aplicación reseteada.",
+        icon: "success",
+        footer: 'Se han borrado los datos guardados en Local Storage',
+        grow: 'fullscreen'
+      }).then(() => {
+        location.reload();
+      });
+    };
+  });
 });
 
-// Fecha
+// Fecha y hora
 const pfecha = document.getElementById('fecha');
-const fecha = new Date()
-pfecha.innerText= fecha.toLocaleDateString() + fecha.toLocaleTimeString()
+const DateTime = luxon.DateTime
+const fecha = DateTime.now()
+const idiomas = ['es', 'en', 'de', 'fr', 'ar', 'el', 'ja', 'zh', 'hi'];
+const idiomaSelect = document.getElementById('idioma-select');
+const idiomaEnSS = sessionStorage.getItem('idioma') || 'es';
+idiomas.forEach((idioma) => {
+  const opcion = crearElementoHTML({ tag: 'option', text: idioma, value: idioma });
+  idioma == idiomaEnSS && (opcion.defaultSelected = true);
+  idiomaSelect.append(opcion);
+})
+pfecha.innerText = fecha.setLocale(idiomaEnSS).toLocaleString(DateTime.DATE_MED)
+idiomaSelect.addEventListener('change', () => {
+  pfecha.innerText = fecha.setLocale(idiomaSelect.value).toLocaleString(DateTime.DATE_MED);
+  sessionStorage.setItem('idioma', idiomaSelect.value)
+});
