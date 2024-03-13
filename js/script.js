@@ -114,11 +114,13 @@ function agregarPermisosParaAccion(funcion, niveles) {
 
 // se crea la lista de acciones que requieren permisos
 agregarPermisosParaAccion('verProductos', [0, 1, 2, 3, 4, 9]);
+agregarPermisosParaAccion('verPrecios', [1, 2, 3, 4, 9]);
+agregarPermisosParaAccion('verStock', [2, 3, 4, 9]);
 agregarPermisosParaAccion('crearProducto', [4, 9]);
 agregarPermisosParaAccion('editarProducto', [3, 4, 9]);
-agregarPermisosParaAccion('verPrecios', [1, 2, 3, 4, 9]);
+agregarPermisosParaAccion('cambiarNombre', [9]);
+agregarPermisosParaAccion('cambiarImagen', [3, 9]);
 agregarPermisosParaAccion('cambiarPrecios', [3, 9]);
-agregarPermisosParaAccion('verStock', [2, 3, 4, 9]);
 agregarPermisosParaAccion('cambiarStock', [3, 4, 9]);
 
 // esta función se utiliza para verificar si el usuario tiene permiso para realizar determinada acción, según su nivel
@@ -298,11 +300,11 @@ function formNuevoProduct() {
     inputPrecio.disabled = true;
   };
   formNuevo.append(inputStock);
-  const botonesNuevo = crearElementoHTML({tag:'div',clases:'card-botones mt-3'});
+  const botonesNuevo = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
   const botonCancelarNuevo = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
-  botonCancelarNuevo.onclick = ()=> location.reload();
+  botonCancelarNuevo.onclick = () => location.reload();
   botonesNuevo.append(botonCancelarNuevo);
-  const botonGuardarNuevo = crearElementoHTML({tag:'button',type:'submit',clases:'btn btn-secondary',HTML:'Guardar'});
+  const botonGuardarNuevo = crearElementoHTML({ tag: 'button', type: 'submit', clases: 'btn btn-secondary', HTML: 'Guardar' });
   botonesNuevo.append(botonGuardarNuevo);
   formNuevo.append(botonesNuevo)
   cardNuevoBody.append(formNuevo);
@@ -336,12 +338,15 @@ function formEditarProducto(id) {
   formEditar.append(inputNombre);
   const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: `imagen-select-${id}`, clases: 'form-label', text: 'Imagen:' });
   formEditar.append(labelImagen);
-  const selectImagen = crearElementoHTML({ tag: 'select', id: `imagen-select-${id}`, clases: 'form-select'});
+  const selectImagen = crearElementoHTML({ tag: 'select', id: `imagen-select-${id}`, clases: 'form-select' });
   imagenesProductos.forEach((element) => {
-    const opcion = crearElementoHTML({tag:'option',value:element.imagen,text:element.nombre});
+    const opcion = crearElementoHTML({ tag: 'option', value: element.imagen, text: element.nombre });
     imagen == `./assets/images/product/${opcion.value}` && (opcion.defaultSelected = true);
     selectImagen.append(opcion);
   });
+  if (!verificarPermiso('cambiarImagen')) {
+    selectImagen.disabled = true;
+  };
   formEditar.append(selectImagen);
   const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: `precio-producto-${id}`, clases: 'form-label', text: 'Precio en U$D:' });
   formEditar.append(labelPrecio);
@@ -354,14 +359,14 @@ function formEditarProducto(id) {
   formEditar.append(labelStock);
   const inputStock = crearElementoHTML({ tag: 'input', type: 'number', id: `stock-producto-${id}`, clases: 'form-control', value: stock, required: true });
   if (!verificarPermiso('cambiarStock')) {
-    inputPrecio.disabled = true;
+    inputStock.disabled = true;
   };
   formEditar.append(inputStock);
-  const botonesEditar = crearElementoHTML({tag:'div',clases:'card-botones mt-3'});
+  const botonesEditar = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
   const botonCancelarEditar = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
-  botonCancelarEditar.onclick = ()=> location.reload();
+  botonCancelarEditar.onclick = () => location.reload();
   botonesEditar.append(botonCancelarEditar);
-  const botonGuardarEditar = crearElementoHTML({tag:'button',type:'submit',clases:'btn btn-secondary',HTML:'Guardar'});
+  const botonGuardarEditar = crearElementoHTML({ tag: 'button', type: 'submit', clases: 'btn btn-secondary', HTML: 'Guardar' });
   botonesEditar.append(botonGuardarEditar);
   formEditar.append(botonesEditar)
   cardEditarBody.append(formEditar);
@@ -392,3 +397,8 @@ botonReset.addEventListener('click', () => {
   alert('aplicacion reseteada');
   location.reload();
 });
+
+// Fecha
+const pfecha = document.getElementById('fecha');
+const fecha = new Date()
+pfecha.innerText= fecha.toLocaleDateString() + fecha.toLocaleTimeString()
