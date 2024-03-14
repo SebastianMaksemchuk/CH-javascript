@@ -115,7 +115,7 @@ function formAccesoUsuario() {
 function ayuda() {
   Swal.fire({
     title: "Ayuda",
-    html: `Para probar la aplicación puede ingresar con estos usuarios (la contraseña es igual que el nombre de usuario):<br>cliente: puede ver los precios.<br>administracion: puede tambien ver los stock.<br>comercial: puede editar los productos, cambiar precio, stock, etc.<br>produccion: puede editar los productos, pero no los precios, y puede crear productos nuevos.<br>master: puede realizar todas las funciones.`,
+    html: `Para probar la aplicación puede ingresar con estos usuarios (la contraseña es igual que el nombre de usuario):<br>cliente: puede ver los precios.<br>administracion: puede tambien ver los stock.<br>comercial: puede editar los productos, cambiar precio, stock, etc.<br>produccion: puede editar los productos, pero solo el stock, y puede crear productos nuevos.<br>master: puede realizar todas las funciones.`,
     icon: "question",
     confirmButtonColor: "#3085d6",
     confirmButtonText: "OK"
