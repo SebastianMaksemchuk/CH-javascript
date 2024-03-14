@@ -331,10 +331,10 @@ function formNuevoProduct() {
   });
 };
 function crearProductoNuevo() {
-  const nombre = document.getElementById('nombre-producto').value;
-  const precio = document.getElementById('precio-producto').value;
-  const stock = document.getElementById('stock-producto').value;
-  const imagen = `./assets/images/product/${document.getElementById('imagen-select').value}`;
+  const nombre = document.getElementById('nombre-producto').value,
+    precio = document.getElementById('precio-producto').value,
+    stock = document.getElementById('stock-producto').value,
+    imagen = `./assets/images/product/${document.getElementById('imagen-select').value}`;
   agregarProducto(nombre, precio, stock, imagen);
   guardarInventarioLS();
 };
@@ -388,11 +388,11 @@ function formEditarProducto(id) {
   });
 };
 function guardarEdicion(id) {
-  const producto = inventario[parseInt(id) - 1]
-  const nuevoNombre = document.getElementById(`nombre-producto-${id}`).value;
-  const nuevoPrecio = document.getElementById(`precio-producto-${id}`).value;
-  const nuevoStock = document.getElementById(`stock-producto-${id}`).value;
-  const nuevaImagen = `./assets/images/product/${document.getElementById(`imagen-select-${id}`).value}`;
+  const producto = inventario[parseInt(id) - 1],
+    nuevoNombre = document.getElementById(`nombre-producto-${id}`).value,
+    nuevoPrecio = document.getElementById(`precio-producto-${id}`).value,
+    nuevoStock = document.getElementById(`stock-producto-${id}`).value,
+    nuevaImagen = `./assets/images/product/${document.getElementById(`imagen-select-${id}`).value}`;
   producto.cambiarNombre(nuevoNombre);
   producto.cambiarPrecio(nuevoPrecio);
   producto.cambiarStock(nuevoStock);
