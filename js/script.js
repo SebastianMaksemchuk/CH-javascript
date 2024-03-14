@@ -71,11 +71,27 @@ function formAccesoUsuario() {
     // busca el usuario en el array de usuarios, avisa si no existe
     let usuarioEncontrado = usuarios.find(el => el.correo == ingresoUsuario.value || el.nombreDeUsuario == ingresoUsuario.value);
     if (!usuarioEncontrado) {
-      alert('No se encontro un usuario registrado con ese nombre o correo\nUsuarios validos: cliente, administracion, comercial, produccion, master (contraseña = usuario)');
+      Toastify({
+        text: "Usuario no encontrado \n click aquí para ayuda.",
+        duration: 3000,
+        newWindow: true,
+        close: false,
+        position: "center",
+        stopOnFocus: true,
+        onClick: ayuda
+      }).showToast();
     } else {
       //verifica contraseña
       if (usuarioEncontrado.password != ingresoPassword.value) {
-        alert('Contraseña incorrecta');
+        Toastify({
+          text: "Contraseña incorrecta",
+          duration: 3000,
+          newWindow: true,
+          close: false,
+          position: "center",
+          stopOnFocus: true,
+          onClick: ayuda
+        }).showToast();
       } else {
         // acceso válido, guarda usuario en LS y recarga la página
         usuario = usuarioEncontrado;
@@ -84,6 +100,16 @@ function formAccesoUsuario() {
       }
     }
   });
+}
+
+function ayuda() {
+  Swal.fire({
+    title: "Ayuda",
+    html: `Para probar la aplicación puede ingresar con estos usuarios (la contraseña es igual que el nombre de usuario):<br>cliente: puede ver los precios.<br>administracion: puede tambien ver los stock.<br>comercial: puede editar los productos, cambiar precio, stock, etc.<br>produccion: puede editar los productos, pero no los precios, y puede crear productos nuevos.<br>master: puede realizar todas las funciones.`,
+    icon: "question",
+    confirmButtonColor: "#3085d6",
+    confirmButtonText: "OK"
+  })
 }
 
 // Cerrar sesion
@@ -196,9 +222,9 @@ cargarInventarioDesdeLS();
 
 // Si el inventario está vacío creamos unos productos de base
 if (inventario.length === 0) {
-  agregarProducto("NT-Link 4G", 140, 100, `./assets/images/product/${imagenesProductos[5].imagen}`);
-  agregarProducto("NT-COM2 4G", 160, 50, `./assets/images/product/${imagenesProductos[2].imagen}`);
-  agregarProducto("NT-Link WiFi", 60, 75, `./assets/images/product/${imagenesProductos[7].imagen}`);
+  agregarProducto("NT-Link 4G", 140, 2000, `./assets/images/product/${imagenesProductos[5].imagen}`);
+  agregarProducto("NT-COM2 4G", 160, 1000, `./assets/images/product/${imagenesProductos[2].imagen}`);
+  agregarProducto("NT-Link WiFi", 60, 1500, `./assets/images/product/${imagenesProductos[7].imagen}`);
   guardarInventarioLS();
 };
 
@@ -335,7 +361,9 @@ function formEditarProducto(id) {
   const labelNombre = crearElementoHTML({ tag: 'label', htmlFor: `nombre-producto-${id}`, clases: 'form-label', text: 'Nombre:' });
   formEditar.append(labelNombre);
   const inputNombre = crearElementoHTML({ tag: 'input', type: 'text', id: `nombre-producto-${id}`, clases: 'form-control', value: nombre, required: true });
-  formEditar.append(inputNombre);
+  if (!verificarPermiso('cambiarNombre')) {
+    inputNombre.disabled = true;
+  };formEditar.append(inputNombre);
   const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: `imagen-select-${id}`, clases: 'form-label', text: 'Imagen:' });
   formEditar.append(labelImagen);
   const selectImagen = crearElementoHTML({ tag: 'select', id: `imagen-select-${id}`, clases: 'form-select' });

@@ -10,20 +10,23 @@ header {
   height: 3em;
 }
 
-span#bienvenida {
+span#saludo {
   color: white;
 }
 
 #inventario {
   display: flex;
-  gap: 3em;
+  gap: 2em;
   flex-wrap: wrap;
   justify-content: space-around;
 }
 
 .producto {
-  width: 300px;
+  width: 250px;
   height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
 
 .imagen-producto {
