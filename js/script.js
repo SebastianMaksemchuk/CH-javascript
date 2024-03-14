@@ -417,6 +417,24 @@ function guardarEdicion(id) {
   guardarInventarioLS();
 };
 
+// Fecha
+const pfecha = document.getElementById('fecha');
+const DateTime = luxon.DateTime
+const fecha = DateTime.now()
+const idiomas = ['es', 'en', 'de', 'fr', 'ar', 'el', 'ja', 'zh', 'hi'];
+const idiomaSelect = document.getElementById('idioma-select');
+const idiomaEnSS = sessionStorage.getItem('idioma') || 'es';
+idiomas.forEach((idioma) => {
+  const opcion = crearElementoHTML({ tag: 'option', text: idioma, value: idioma });
+  idioma == idiomaEnSS && (opcion.defaultSelected = true);
+  idiomaSelect.append(opcion);
+})
+pfecha.innerText = fecha.setLocale(idiomaEnSS).toLocaleString(DateTime.DATE_MED)
+idiomaSelect.addEventListener('change', () => {
+  pfecha.innerText = fecha.setLocale(idiomaSelect.value).toLocaleString(DateTime.DATE_MED);
+  sessionStorage.setItem('idioma', idiomaSelect.value)
+});
+
 // Reset de aplicación, limpieza de LS y SS
 const botonReset = document.getElementById('btn-reset');
 botonReset.addEventListener('click', () => {
@@ -444,20 +462,3 @@ botonReset.addEventListener('click', () => {
   });
 });
 
-// Fecha y hora
-const pfecha = document.getElementById('fecha');
-const DateTime = luxon.DateTime
-const fecha = DateTime.now()
-const idiomas = ['es', 'en', 'de', 'fr', 'ar', 'el', 'ja', 'zh', 'hi'];
-const idiomaSelect = document.getElementById('idioma-select');
-const idiomaEnSS = sessionStorage.getItem('idioma') || 'es';
-idiomas.forEach((idioma) => {
-  const opcion = crearElementoHTML({ tag: 'option', text: idioma, value: idioma });
-  idioma == idiomaEnSS && (opcion.defaultSelected = true);
-  idiomaSelect.append(opcion);
-})
-pfecha.innerText = fecha.setLocale(idiomaEnSS).toLocaleString(DateTime.DATE_MED)
-idiomaSelect.addEventListener('change', () => {
-  pfecha.innerText = fecha.setLocale(idiomaSelect.value).toLocaleString(DateTime.DATE_MED);
-  sessionStorage.setItem('idioma', idiomaSelect.value)
-});
