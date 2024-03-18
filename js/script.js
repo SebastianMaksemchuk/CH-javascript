@@ -53,12 +53,12 @@ const headerDerecha = document.getElementById('header-derecha');
 document.querySelector('#saludo').innerText = `¡Hola ${usuario.nombre}!`;
 // genera el boton de acceso o cierre de sesión
 if (usuario.id == 0) {
-  const botonAcceso = crearElementoHTML({ tag: 'button', HTML: 'Acceder', id: 'btn-acceso' });
+  const botonAcceso = crearElementoHTML({ tag: 'button', text: 'Acceder', id: 'btn-acceso' });
   headerDerecha.appendChild(botonAcceso);
 } else {
-  const botonSalir = crearElementoHTML({ tag: 'button', HTML: 'Salir', id: 'btn-salir' });
+  const botonSalir = crearElementoHTML({ tag: 'button', text: 'Salir', id: 'btn-salir' });
   headerDerecha.appendChild(botonSalir);
-}
+};
 
 // transformar parte derecha del header en formulario de ingreso
 const botonAcceso = document.getElementById('btn-acceso');
@@ -119,14 +119,14 @@ function ayuda() {
     icon: "question",
     confirmButtonColor: "#3085d6",
     confirmButtonText: "OK"
-  })
-}
+  });
+};
 
 // Cerrar sesion
 const botonSalir = document.getElementById('btn-salir');
 botonSalir?.addEventListener('click', cerrarSesion);
 function cerrarSesion() {
-  localStorage.setItem('usuario', JSON.stringify(usuarios[0]))
+  localStorage.setItem('usuario', JSON.stringify(usuarios[0]));
   location.reload();
 };
 
