@@ -1,17 +1,39 @@
-header {
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  padding: 2em;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  padding: 1%;
+  width: 100%;
   background-color: gray;
 }
 
-#logo-netio {
+header input {
+  width: 110px;
+}
+
+#logo-netio,
+#img-pkmn {
   height: 3em;
 }
 
 span#saludo {
   color: white;
+  margin: 0 2em;
+}
+
+main {
+  flex: 1;
 }
 
 #inventario {
@@ -37,8 +59,13 @@ span#saludo {
 footer {
   background-color: black;
   color: white;
-  display: flex;
-  justify-content: space-between;
+  margin: 0;
+  padding: 0 2%;
+  width: 100%;
+}
+
+.boton {
+  height: fit-content;
 }
 
 .card-botones {
@@ -57,4 +84,8 @@ p {
 
 .em {
   height: 1em;
+}
+
+.align-right {
+  text-align: right
 }

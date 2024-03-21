@@ -1,0 +1,23 @@
+[
+  {
+    "id": "001",
+    "nombre": "NT-Link 4G",
+    "precio": 140,
+    "stock": 2000,
+    "imagen": "./assets/images/product/productos-ntlink-4g.webp"
+  },
+  {
+    "id": "002",
+    "nombre": "NT-COM2 4G",
+    "precio": 160,
+    "stock": 1000,
+    "imagen": "./assets/images/product/productos-ntcom2-4g.webp"
+  },
+  {
+    "id": "003",
+    "nombre": "NT-Link WiFi",
+    "precio": 60,
+    "stock": 1500,
+    "imagen": "./assets/images/product/productos-wifi.webp"
+  }
+]

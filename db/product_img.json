@@ -1,0 +1,10 @@
+[
+  { "nombre": "Sin imagen", "imagen": "sin-imagen.svg" },
+  { "nombre": "Accesorio", "imagen": "productos-accesorios.webp" },
+  { "nombre": "NT-Com 2 4G", "imagen": "productos-ntcom2-4g.webp" },
+  { "nombre": "NT-Com 3 4G", "imagen": "productos-ntcom3-4g.webp" },
+  { "nombre": "NT-Link 4G/5G", "imagen": "productos-ntlink-4g-5g.webp" },
+  { "nombre": "NT-Link 4G", "imagen": "productos-ntlink-4g.webp" },
+  { "nombre": "NT-RRL", "imagen": "productos-receptora.webp" },
+  { "nombre": "NT-Link WiFi", "imagen": "productos-wifi.webp" }
+]

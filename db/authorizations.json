@@ -1,0 +1,38 @@
+[
+  {
+      "funcion": "verProductos",
+      "niveles": [0, 1, 2, 3, 4, 9]
+  },
+  {
+      "funcion": "verPrecios",
+      "niveles": [1, 2, 3, 4, 9]
+  },
+  {
+      "funcion": "verStock",
+      "niveles": [2, 3, 4, 9]
+  },
+  {
+      "funcion": "crearProducto",
+      "niveles": [4, 9]
+  },
+  {
+      "funcion": "editarProducto",
+      "niveles": [3, 4, 9]
+  },
+  {
+      "funcion": "cambiarNombre",
+      "niveles": [9]
+  },
+  {
+      "funcion": "cambiarImagen",
+      "niveles": [3, 9]
+  },
+  {
+      "funcion": "cambiarPrecios",
+      "niveles": [3, 9]
+  },
+  {
+      "funcion": "cambiarStock",
+      "niveles": [3, 4, 9]
+  }
+]

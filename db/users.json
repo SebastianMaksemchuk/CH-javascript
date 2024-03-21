@@ -1,0 +1,65 @@
+[
+  {
+      "id": 0,
+      "correo": null,
+      "nombreDeUsuario": null,
+      "nombre": "Invitado",
+      "apellido": null,
+      "password": null,
+      "nivel": 0
+  },
+  {
+      "id": 1,
+      "correo": "sebastian@netio.com.ar",
+      "nombreDeUsuario": "sebastian",
+      "nombre": "Sebastian",
+      "apellido": "Maksemchuk",
+      "password": "1234",
+      "nivel": 9
+  },
+  {
+      "id": 2,
+      "correo": "master@netio.com.ar",
+      "nombreDeUsuario": "master",
+      "nombre": "Master",
+      "apellido": "M",
+      "password": "master",
+      "nivel": 9
+  },
+  {
+      "id": 3,
+      "correo": "produccion@netio.com.ar",
+      "nombreDeUsuario": "produccion",
+      "nombre": "Produccion",
+      "apellido": "P",
+      "password": "produccion",
+      "nivel": 4
+  },
+  {
+      "id": 4,
+      "correo": "comercial@netio.com.ar",
+      "nombreDeUsuario": "comercial",
+      "nombre": "Comercial",
+      "apellido": "C",
+      "password": "comercial",
+      "nivel": 3
+  },
+  {
+      "id": 5,
+      "correo": "administracion@netio.com.ar",
+      "nombreDeUsuario": "administracion",
+      "nombre": "Administracion",
+      "apellido": "A",
+      "password": "administracion",
+      "nivel": 2
+  },
+  {
+      "id": 6,
+      "correo": "cliente@netio.com.ar",
+      "nombreDeUsuario": "cliente",
+      "nombre": "Cliente",
+      "apellido": "C",
+      "password": "cliente",
+      "nivel": 1
+  }
+]

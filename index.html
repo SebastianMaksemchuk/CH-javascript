@@ -3,45 +3,61 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pre-entrega 3 del proyecto para el curso de Javascript de CoderHouse">
+    <meta name="description" content="Proyecto final para el curso de Javascript de CoderHouse">
     <meta name="author" content="Sebastian Maksemchuk">
     <link rel="shortcut icon" href="./assets/icons/favicon-32x32.webp" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="./css/style.css">
-    <title>Pre-entrega 3</title>
+    <title>Proyecto final</title>
   </head>
+
   <body>
     <header>
-      <img id="logo-netio" src="./assets/images/logo.png" alt="logo comoercial de Netio SRL">
-      <div id="header-derecha">
-        <span id="saludo"><!-- contenido dinamico: saludo --></span>
-        <!-- contenido dinamico: boton de acceder o salir -->
+      <div class="row justify-content-between align-items-center m-auto">
+        <div class="col-sm-4">
+          <img id="logo-netio" src="./assets/images/logo.png" alt="logo comercial de Netio SRL">
+        </div>
+        <div class="col-sm-4 d-flex justify-content-center align-items-center">
+          <img id="img-pkmn" src="" alt="">
+        </div>
+        <div id="header-derecha" class="col-sm-4 align-right">
+          <!-- contenido dinamico: boton de acceder o salir -->
+        </div>
       </div>
     </header>
+
     <main class="p-2">
       <h1>Inventario de productos</h1>
       <div id="inventario">
         <!-- contenido dinamico: cards de productos y otros -->
       </div>
     </main>
+
     <footer class="footer mt-3">
-      <div>
-        <h2>Pre-entrega 3 || Javascript || comision 53920</h2>
-        <h3>Autor: Sebastian Maksemchuk</h3>
-      </div>
-      <div>
-        <span id="fecha"><!-- contenido dinamico: fecha --></span>
-        <select name="idioma" id="idioma-select"><!-- contenido dinamico: opciones de idioma para fecha --></select>
-        <div class="em"> </div>
-        <button id="btn-reset">Resetear aplicación</button>
+      <div class="row justify-content-between">
+        <div class="col-sm-4 p-0">
+          <h5>Pre-entrega 3 || Javascript || comision 53920</h5>
+          <h6>Autor: Sebastian Maksemchuk</h6>
+        </div>
+        <div class="col-sm-4 d-flex justify-content-center align-items-center p-0">
+          <button id="btn-pkmn" class="boton">Pokemon</button>
+        </div>
+        <div class="col-sm-4 align-right p-0">
+          <span id="fecha"><!-- contenido dinamico: fecha --></span>
+          <select name="idioma" id="idioma-select"><!-- contenido dinamico: opciones de idioma para fecha --></select>
+          <br>
+          <button id="btn-reset" class="boton">Resetear aplicación</button>
+        </div>
       </div>
     </footer>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js"></script>
-    <script src="./js/script.js"></script>
+    <script src="./js/main.js"></script>
+    <script src="./js/date_language.js"></script>
+    <script src="./js/pokemon.js"></script>
 
   </body>
 </html>
