@@ -60,9 +60,7 @@ async function getCombinado(...get) {
 // llamados a elementos del html, los let son dinámicos
 const headerDerecha = document.getElementById('header-derecha'),
   inventarioHTML = document.getElementById('inventario'),
-  botonReset = document.getElementById('btn-reset'),
-  pfecha = document.getElementById('fecha'),
-  idiomaSelect = document.getElementById('idioma-select');
+  botonReset = document.getElementById('btn-reset');
 let saludo, botonAcceso, botonSalir, botonNuevo, ingresoUsuario, ingresoPassword;
 
 // funciones relacionadas al html
@@ -360,7 +358,6 @@ function guardarInventario() {
   // funcion para guardar el inventario en LS
   localStorage.setItem('inventario', JSON.stringify(inventario));
 };
-
 
 // Ejecución
 // carga de DB usuarios
