@@ -1,4 +1,4 @@
-// arrays de datos
+// arrays
 let usuarios = [];
 let permisos = [];
 let inventario = [];
@@ -43,6 +43,7 @@ const getImagenesProductos = async () => {
   const data = await response.json();
   imagenesProductos = data;
 };
+// esta funcion es para cuando necesito cargar mas de una DB con igual prioridad
 async function getCombinado(...get) {
   for (let i = 0; i < get.length; i++) {
     await get[i]();
@@ -53,7 +54,7 @@ async function getCombinado(...get) {
 const headerDerecha = document.getElementById('header-derecha'),
   inventarioHTML = document.getElementById('inventario'),
   botonReset = document.getElementById('btn-reset');
-let saludo, botonAcceso, botonSalir, botonNuevo, ingresoUsuario, ingresoPassword;
+let saludo, botonAcceso, botonSalir, cardNuevo, botonNuevo, ingresoUsuario, ingresoPassword;
 
 // funciones relacionadas al html
 // funcion auxiliar para crear elementos HTML de forma más concisa
@@ -92,6 +93,7 @@ function iniciarHeader() {
   };
 };
 function formAccesoUsuario() {
+  // muestra el formulario de log in
   const formularioAcceso = crearElementoHTML({
     tag: 'form', id: 'formulario-acceso',
     HTML: `<input type="text" name="usuario" id="ingreso-usuario" placeholder="Usuario/Correo">
@@ -146,64 +148,8 @@ function mostrarInventario() {
     };
   }, 1000);
 };
-function formNuevoProduct() {
-  const cardNuevo = document.getElementById('nuevo-producto');
-  cardNuevo.innerHTML = '';
-  const cardNuevoBody = crearElementoHTML({
-    tag: 'div', clases: 'card-body',
-    HTML: `<h5 class="card-title">Agregar Producto</h5>`
-  });
-  cardNuevo.append(cardNuevoBody);
-  const formNuevo = crearElementoHTML({ tag: 'form', id: 'form-nuevo' });
-  const labelNombre = crearElementoHTML({ tag: 'label', clases: 'form-label', text: 'Nombre:', htmlFor: 'nombre-producto' });
-  formNuevo.append(labelNombre);
-  const inputNombre = crearElementoHTML({
-    tag: 'input', type: 'text', id: 'nombre-producto', clases: 'form-control', placeholder: 'Nombre del nuevo producto', required: true
-  });
-  formNuevo.append(inputNombre);
-  const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: 'imagen-select', clases: 'form-label', text: 'Imagen:' });
-  formNuevo.append(labelImagen);
-  const selectImagen = crearElementoHTML({ tag: 'select', id: 'imagen-select', clases: 'form-select' });
-  imagenesProductos.forEach((element) => {
-    const opcion = crearElementoHTML({ tag: 'option', value: element.imagen, text: element.nombre });
-    selectImagen.append(opcion);
-  });
-  formNuevo.append(selectImagen);
-  const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: 'precio-producto', clases: 'form-label', text: 'Precio en U$D:' });
-  formNuevo.append(labelPrecio);
-  const inputPrecio = crearElementoHTML({
-    tag: 'input', type: 'number', id: 'precio-producto', clases: 'form-control', placeholder: 'Precio', required: true
-  });
-  if (!verificarPermiso('cambiarPrecios')) {
-    inputPrecio.value = 999999;
-    inputPrecio.disabled = true;
-  };
-  formNuevo.append(inputPrecio);
-  const labelStock = crearElementoHTML({ tag: 'label', htmlFor: 'stock-producto', clases: 'form-label', text: 'Stock inicial:' })
-  formNuevo.append(labelStock);
-  const inputStock = crearElementoHTML({
-    tag: 'input', type: 'number', id: 'stock-producto', clases: 'form-control', placeholder: 'Stock', required: true
-  });
-  if (!verificarPermiso('cambiarStock')) {
-    inputStock.value = 0;
-    inputStock.disabled = true;
-  };
-  formNuevo.append(inputStock);
-  const botonesNuevo = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
-  const botonCancelarNuevo = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
-  botonCancelarNuevo.onclick = () => mostrarInventario();
-  botonesNuevo.append(botonCancelarNuevo);
-  const botonGuardarNuevo = crearElementoHTML({ tag: 'button', type: 'submit', clases: 'btn btn-secondary', HTML: 'Guardar' });
-  botonesNuevo.append(botonGuardarNuevo);
-  formNuevo.append(botonesNuevo)
-  cardNuevoBody.append(formNuevo);
-  formNuevo.addEventListener('submit', (e) => {
-    e.preventDefault();
-    crearProductoNuevo();
-    mostrarInventario();
-  });
-};
 function formEditarProducto(id) {
+  // transforma la card de producto en formulario de edición de producto
   const productoEditar = inventario[parseInt(id) - 1];
   const { nombre, imagen, precio, stock } = productoEditar;
   const cardEditar = document.getElementById(`producto-${id}`);
@@ -267,10 +213,12 @@ function formEditarProducto(id) {
   botonX.addEventListener('click', () => actualizarCardProducto(id));
 };
 function actualizarCardProducto(id) {
+  // vuelve a mostrar la card de producto al finalizar o cancelar la edicion
   const producto = inventario[parseInt(id) - 1];
   const { nombre, imagen, precio, stock } = producto;
   const card = document.getElementById(`producto-${id}`);
   card.innerHTML = 'cargando...';
+    // simulacion de tiempo de carga
   setTimeout(() => {
     card.innerHTML = `<img class="card-img-top producto-imagen" src=${imagen} alt="">
                       <h4 class="card-title producto-nombre">${nombre}</h4>`;
@@ -292,6 +240,69 @@ function actualizarCardProducto(id) {
     };
   }, 500)
 };
+function formNuevoProduct() {
+  // muestra el formulario para crear un producto nuevo
+  cardNuevo = document.getElementById('nuevo-producto');
+  cardNuevo.innerHTML = '';
+  const cardNuevoBody = crearElementoHTML({
+    tag: 'div', clases: 'card-body',
+    HTML: `<h5 class="card-title">Agregar Producto</h5>`
+  });
+  cardNuevo.append(cardNuevoBody);
+  const formNuevo = crearElementoHTML({ tag: 'form', id: 'form-nuevo' });
+  const labelNombre = crearElementoHTML({ tag: 'label', clases: 'form-label', text: 'Nombre:', htmlFor: 'nombre-producto' });
+  formNuevo.append(labelNombre);
+  const inputNombre = crearElementoHTML({
+    tag: 'input', type: 'text', id: 'nombre-producto', clases: 'form-control', placeholder: 'Nombre del nuevo producto', required: true
+  });
+  formNuevo.append(inputNombre);
+  const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: 'imagen-select', clases: 'form-label', text: 'Imagen:' });
+  formNuevo.append(labelImagen);
+  const selectImagen = crearElementoHTML({ tag: 'select', id: 'imagen-select', clases: 'form-select' });
+  imagenesProductos.forEach((element) => {
+    const opcion = crearElementoHTML({ tag: 'option', value: element.imagen, text: element.nombre });
+    selectImagen.append(opcion);
+  });
+  formNuevo.append(selectImagen);
+  const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: 'precio-producto', clases: 'form-label', text: 'Precio en U$D:' });
+  formNuevo.append(labelPrecio);
+  const inputPrecio = crearElementoHTML({
+    tag: 'input', type: 'number', id: 'precio-producto', clases: 'form-control', placeholder: 'Precio', required: true
+  });
+  if (!verificarPermiso('cambiarPrecios')) {
+    inputPrecio.value = 999999;
+    inputPrecio.disabled = true;
+  };
+  formNuevo.append(inputPrecio);
+  const labelStock = crearElementoHTML({ tag: 'label', htmlFor: 'stock-producto', clases: 'form-label', text: 'Stock inicial:' })
+  formNuevo.append(labelStock);
+  const inputStock = crearElementoHTML({
+    tag: 'input', type: 'number', id: 'stock-producto', clases: 'form-control', placeholder: 'Stock', required: true
+  });
+  if (!verificarPermiso('cambiarStock')) {
+    inputStock.value = 0;
+    inputStock.disabled = true;
+  };
+  formNuevo.append(inputStock);
+  const botonesNuevo = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
+  const botonCancelarNuevo = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
+  botonCancelarNuevo.onclick = () => cancelarCardNuevo();
+  botonesNuevo.append(botonCancelarNuevo);
+  const botonGuardarNuevo = crearElementoHTML({ tag: 'button', type: 'submit', clases: 'btn btn-secondary', HTML: 'Guardar' });
+  botonesNuevo.append(botonGuardarNuevo);
+  formNuevo.append(botonesNuevo)
+  cardNuevoBody.append(formNuevo);
+  formNuevo.addEventListener('submit', (e) => {
+    e.preventDefault();
+    crearProductoNuevo();
+    mostrarInventario();
+  });
+};
+function cancelarCardNuevo() {
+  cardNuevo.innerHTML = `<button class="btn btn-block w-100 h-100 m-0">Añadir un nuevo producto</button>`;
+  botonNuevo = document.querySelector('#nuevo-producto button');
+  botonNuevo.addEventListener('click', formNuevoProduct);
+}
 
 // funciones varias
 function logIn() {
@@ -331,6 +342,7 @@ function logIn() {
   };
 };
 function logOut() {
+  // borra el usuario de LS y vuelve al usuario invitado
   localStorage.removeItem('usuario');
   usuario = usuarios[0];
   iniciarHeader();
@@ -404,7 +416,7 @@ function guardarInventario() {
   localStorage.setItem('inventario', JSON.stringify(inventario));
 };
 
-// Inicialización SPA
+// Inicialización
 // carga de DB usuarios
 getUsuarios().then(() => {
   // carga del inventario desde LS, si no existe se carga un inventario inicial desde DB y se guarda en LS
@@ -421,7 +433,7 @@ getUsuarios().then(() => {
   // carga de DBs necesarias para poder mostrar el inventario
   getCombinado(getImagenesProductos, getPermisos).then(() => {
     verificarPermiso('verProductos') && mostrarInventario();
-    // SPA iniciaizada
+    // Fin inicialización
   });
 });
 
