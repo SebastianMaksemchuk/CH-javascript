@@ -13,18 +13,10 @@ class Producto {
     this.stock = stock;
     this.imagen = imagen;
   };
-  cambiarNombre(nuevo) {
-    this.nombre = nuevo;
-  };
-  cambiarPrecio(nuevo) {
-    this.precio = nuevo;
-  };
-  cambiarStock(nuevo) {
-    this.stock = nuevo;
-  };
-  cambiarImagen(nuevo) {
-    this.imagen = nuevo;
-  };
+  cambiarNombre(nuevo) { this.nombre = nuevo };
+  cambiarPrecio(nuevo) { this.precio = nuevo };
+  cambiarStock(nuevo) { this.stock = nuevo };
+  cambiarImagen(nuevo) { this.imagen = nuevo };
 };
 
 // objetos
@@ -104,7 +96,8 @@ function formAccesoUsuario() {
     tag: 'form', id: 'formulario-acceso',
     HTML: `<input type="text" name="usuario" id="ingreso-usuario" placeholder="Usuario/Correo">
           <input type="password" name="password" id="ingreso-password" placeholder="Contraseña">
-          <button type="submit" id="btn-ingresar">Ingresar</button>`});
+          <button type="submit" id="btn-ingresar">Ingresar</button>`
+  });
   headerDerecha.innerHTML = '';
   headerDerecha.appendChild(formularioAcceso);
   formularioAcceso.addEventListener('submit', function (e) {
@@ -114,15 +107,15 @@ function formAccesoUsuario() {
 };
 // funciones sobre el inventario
 function mostrarInventario() {
-  inventarioHTML.innerHTML = 'cargando...'
+  inventarioHTML.innerHTML = 'cargando...';
   // simulacion de tiempo de carga
   setTimeout(() => {
-    inventarioHTML.innerHTML = ''
+    inventarioHTML.innerHTML = '';
     // crear una card para cada producto en el inventario con contenido variable segun nivel/permisos de usuario
     inventario.forEach(({ id, nombre, precio, stock, imagen }) => {
       const card = crearElementoHTML({
         tag: 'div', id: `producto-${id}`, clases: 'card text-center producto',
-        HTML: ` <img class="card-img-top producto-imagen" src=${imagen} alt="">
+        HTML: `<img class="card-img-top producto-imagen" src=${imagen} alt="">
               <h4 class="card-title producto-nombre">${nombre}</h4>`
       });
       if (verificarPermiso('verPrecios')) {
@@ -135,8 +128,7 @@ function mostrarInventario() {
       };
       if (verificarPermiso('editarProducto')) {
         const botonEditar = crearElementoHTML({
-          tag: 'button', text: 'Editar',
-          clases: "btn btn-sm position-absolute top-0 end-0 m-2", value: parseInt(id - 1)
+          tag: 'button', text: 'Editar', clases: "btn btn-sm position-absolute top-0 end-0 m-2", value: parseInt(id - 1)
         });
         card.append(botonEditar);
         botonEditar.addEventListener('click', () => formEditarProducto(id))
@@ -165,7 +157,9 @@ function formNuevoProduct() {
   const formNuevo = crearElementoHTML({ tag: 'form', id: 'form-nuevo' });
   const labelNombre = crearElementoHTML({ tag: 'label', clases: 'form-label', text: 'Nombre:', htmlFor: 'nombre-producto' });
   formNuevo.append(labelNombre);
-  const inputNombre = crearElementoHTML({ tag: 'input', type: 'text', id: 'nombre-producto', clases: 'form-control', placeholder: 'Nombre del nuevo producto', required: true });
+  const inputNombre = crearElementoHTML({
+    tag: 'input', type: 'text', id: 'nombre-producto', clases: 'form-control', placeholder: 'Nombre del nuevo producto', required: true
+  });
   formNuevo.append(inputNombre);
   const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: 'imagen-select', clases: 'form-label', text: 'Imagen:' });
   formNuevo.append(labelImagen);
@@ -177,7 +171,9 @@ function formNuevoProduct() {
   formNuevo.append(selectImagen);
   const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: 'precio-producto', clases: 'form-label', text: 'Precio en U$D:' });
   formNuevo.append(labelPrecio);
-  const inputPrecio = crearElementoHTML({ tag: 'input', id: 'precio-producto', clases: 'form-control', placeholder: 'Precio', required: true });
+  const inputPrecio = crearElementoHTML({
+    tag: 'input', type: 'number', id: 'precio-producto', clases: 'form-control', placeholder: 'Precio', required: true
+  });
   if (!verificarPermiso('cambiarPrecios')) {
     inputPrecio.value = 999999;
     inputPrecio.disabled = true;
@@ -185,10 +181,12 @@ function formNuevoProduct() {
   formNuevo.append(inputPrecio);
   const labelStock = crearElementoHTML({ tag: 'label', htmlFor: 'stock-producto', clases: 'form-label', text: 'Stock inicial:' })
   formNuevo.append(labelStock);
-  const inputStock = crearElementoHTML({ tag: 'input', type: 'number', id: 'stock-producto', clases: 'form-control', placeholder: 'Stock', required: true });
+  const inputStock = crearElementoHTML({
+    tag: 'input', type: 'number', id: 'stock-producto', clases: 'form-control', placeholder: 'Stock', required: true
+  });
   if (!verificarPermiso('cambiarStock')) {
-    inputPrecio.value = 0;
-    inputPrecio.disabled = true;
+    inputStock.value = 0;
+    inputStock.disabled = true;
   };
   formNuevo.append(inputStock);
   const botonesNuevo = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
@@ -210,12 +208,17 @@ function formEditarProducto(id) {
   const { nombre, imagen, precio, stock } = productoEditar;
   const cardEditar = document.getElementById(`producto-${id}`);
   cardEditar.innerHTML = '';
-  const cardEditarBody = crearElementoHTML({ tag: 'div', clases: 'card-body', HTML: '<h5 class="card-title">Editar Producto</h5>' });
+  const cardEditarBody = crearElementoHTML({
+    tag: 'div', clases: 'card-body',
+    HTML: '<h5 class="card-title">Editar Producto</h5>'
+  });
   cardEditar.append(cardEditarBody);
   const formEditar = crearElementoHTML({ tag: 'form', id: `form-editar-${id}` });
   const labelNombre = crearElementoHTML({ tag: 'label', htmlFor: `nombre-producto-${id}`, clases: 'form-label', text: 'Nombre:' });
   formEditar.append(labelNombre);
-  const inputNombre = crearElementoHTML({ tag: 'input', type: 'text', id: `nombre-producto-${id}`, clases: 'form-control', value: nombre, required: true });
+  const inputNombre = crearElementoHTML({
+    tag: 'input', type: 'text', id: `nombre-producto-${id}`, clases: 'form-control', value: nombre, required: true
+  });
   !verificarPermiso('cambiarNombre') && (inputNombre.disabled = true);
   formEditar.append(inputNombre);
   const labelImagen = crearElementoHTML({ tag: 'label', htmlFor: `imagen-select-${id}`, clases: 'form-label', text: 'Imagen:' });
@@ -228,20 +231,26 @@ function formEditarProducto(id) {
   });
   !verificarPermiso('cambiarImagen') && (selectImagen.disabled = true)
   formEditar.append(selectImagen);
-  const labelPrecio = crearElementoHTML({ tag: 'label', htmlFor: `precio-producto-${id}`, clases: 'form-label', text: 'Precio en U$D:' });
+  const labelPrecio = crearElementoHTML({
+    tag: 'label', htmlFor: `precio-producto-${id}`, clases: 'form-label', text: 'Precio en U$D:'
+  });
   formEditar.append(labelPrecio);
-  const inputPrecio = crearElementoHTML({ tag: 'input', type: 'number', id: `precio-producto-${id}`, clases: 'form-control', value: precio, required: true });
+  const inputPrecio = crearElementoHTML({
+    tag: 'input', type: 'number', id: `precio-producto-${id}`, clases: 'form-control', value: precio, required: true
+  });
   !verificarPermiso('cambiarPrecios') && (inputPrecio.disabled = true);
   formEditar.append(inputPrecio);
   const labelStock = crearElementoHTML({ tag: 'label', htmlFor: `stock-producto-${id}`, clases: 'form-label', text: 'Stock:' });
   formEditar.append(labelStock);
-  const inputStock = crearElementoHTML({ tag: 'input', type: 'number', id: `stock-producto-${id}`, clases: 'form-control', value: stock, required: true });
+  const inputStock = crearElementoHTML({
+    tag: 'input', type: 'number', id: `stock-producto-${id}`, clases: 'form-control', value: stock, required: true
+  });
   !verificarPermiso('cambiarStock') && (inputStock.disabled = true);
   formEditar.append(inputStock);
   const botonesEditar = crearElementoHTML({ tag: 'div', clases: 'card-botones mt-3' });
   const botonCancelarEditar = crearElementoHTML({ tag: 'button', type: 'reset', clases: 'btn btn-secondary', text: 'Cancelar' });
-  botonCancelarEditar.onclick = () => mostrarInventario();
   botonesEditar.append(botonCancelarEditar);
+  botonCancelarEditar.onclick = () => actualizarCardProducto(id);
   const botonGuardarEditar = crearElementoHTML({ tag: 'button', type: 'submit', clases: 'btn btn-secondary', HTML: 'Guardar' });
   botonesEditar.append(botonGuardarEditar);
   formEditar.append(botonesEditar)
@@ -249,8 +258,39 @@ function formEditarProducto(id) {
   formEditar.addEventListener('submit', (e) => {
     e.preventDefault();
     guardarEdicion(id);
-    mostrarInventario();
+    actualizarCardProducto(id);
   });
+  const botonX = crearElementoHTML({
+    tag: 'button', text: 'X', clases: "btn btn-sm position-absolute top-0 end-0 m-2", value: parseInt(id - 1)
+  });
+  cardEditarBody.append(botonX);
+  botonX.addEventListener('click', () => actualizarCardProducto(id));
+};
+function actualizarCardProducto(id) {
+  const producto = inventario[parseInt(id) - 1];
+  const { nombre, imagen, precio, stock } = producto;
+  const card = document.getElementById(`producto-${id}`);
+  card.innerHTML = 'cargando...';
+  setTimeout(() => {
+    card.innerHTML = `<img class="card-img-top producto-imagen" src=${imagen} alt="">
+                      <h4 class="card-title producto-nombre">${nombre}</h4>`;
+    if (verificarPermiso('verPrecios')) {
+      const mostrarPrecio = crearElementoHTML({ tag: 'p', clases: 'producto-precio', text: `U$D ${precio}` });
+      card.append(mostrarPrecio);
+    };
+    if (verificarPermiso('verStock')) {
+      const mostrarStock = crearElementoHTML({ tag: 'p', clases: 'producto-stock', text: `Stock: ${stock}` });
+      card.append(mostrarStock)
+    };
+    if (verificarPermiso('editarProducto')) {
+      const botonEditar = crearElementoHTML({
+        tag: 'button', text: 'Editar',
+        clases: "btn btn-sm position-absolute top-0 end-0 m-2", value: parseInt(id - 1)
+      });
+      card.append(botonEditar);
+      botonEditar.addEventListener('click', () => formEditarProducto(id))
+    };
+  }, 500)
 };
 
 // funciones varias
@@ -300,7 +340,12 @@ function ayuda() {
   //  funcion para mostrar mensaje de ayuda al clickear los toast
   Swal.fire({
     title: "Ayuda",
-    html: `Para probar la aplicación puede ingresar con estos usuarios (la contraseña es igual que el nombre de usuario):<br>cliente: puede ver los precios.<br>administracion: puede tambien ver los stock.<br>comercial: puede editar los productos, cambiar precio, stock, etc.<br>produccion: puede editar los productos, pero solo el stock, y puede crear productos nuevos.<br>master: puede realizar todas las funciones.`,
+    html: `Para probar la aplicación puede ingresar con estos usuarios (la contraseña es igual que el nombre de usuario):<br>
+          cliente: puede ver los precios.<br>
+          administracion: puede tambien ver los stock.<br>
+          comercial: puede editar los productos, cambiar precio, stock, etc.<br>
+          produccion: puede editar los productos, pero solo el stock, y puede crear productos nuevos.<br>
+          master: puede realizar todas las funciones.`,
     icon: "question",
     confirmButtonColor: "#3085d6",
     confirmButtonText: "OK"
@@ -359,7 +404,7 @@ function guardarInventario() {
   localStorage.setItem('inventario', JSON.stringify(inventario));
 };
 
-// Ejecución
+// Inicialización SPA
 // carga de DB usuarios
 getUsuarios().then(() => {
   // carga del inventario desde LS, si no existe se carga un inventario inicial desde DB y se guarda en LS
@@ -376,6 +421,7 @@ getUsuarios().then(() => {
   // carga de DBs necesarias para poder mostrar el inventario
   getCombinado(getImagenesProductos, getPermisos).then(() => {
     verificarPermiso('verProductos') && mostrarInventario();
+    // SPA iniciaizada
   });
 });
 
