@@ -24,22 +24,22 @@ let usuario = {};
 
 // funciones de carga de bases de datos
 const getUsuarios = async () => {
-  const response = await fetch('../db/users.json');
+  const response = await fetch('/CH-javascript/db/users.json');
   const data = await response.json();
   usuarios = data;
 };
 const getPermisos = async () => {
-  const response = await fetch('../db/authorizations.json');
+  const response = await fetch('/CH-javascript/db/authorizations.json');
   const data = await response.json();
   permisos = data;
 };
 const getInventarioInicial = async () => {
-  const response = await fetch('../db/inventory_init.json');
+  const response = await fetch('/CH-javascript/db/inventory_init.json');
   const data = await response.json();
   inventario = data;
 };
 const getImagenesProductos = async () => {
-  const response = await fetch('../db/product_img.json');
+  const response = await fetch('/CH-javascript/db/product_img.json');
   const data = await response.json();
   imagenesProductos = data;
 };
